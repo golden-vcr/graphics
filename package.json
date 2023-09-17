@@ -7,11 +7,15 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "check": "svelte-check --tsconfig ./tsconfig.json"
+    "check": "svelte-check --tsconfig ./tsconfig.json",
+    "deploy": "vite build && node deploy.js"
   },
   "devDependencies": {
+    "@aws-sdk/client-s3": "^3.414.0",
     "@sveltejs/vite-plugin-svelte": "^2.4.2",
     "@tsconfig/svelte": "^5.0.0",
+    "dotenv": "^16.3.1",
+    "mime-types": "^2.1.35",
     "svelte": "^4.0.5",
     "svelte-check": "^3.4.6",
     "tslib": "^2.6.0",

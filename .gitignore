@@ -1,3 +1,6 @@
+# Secret env vars from terraform state
+*.env
+
 # Logs
 logs
 *.log
