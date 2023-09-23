@@ -3,7 +3,6 @@
   line-height: 1.5;
   font-weight: 400;
 
-  color-scheme: dark;
   color: rgba(255, 255, 255, 0.87);
 
   font-synthesis: none;
@@ -17,4 +16,29 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+}
+
+html, body, #app {
+  width: 100%;
+  height: 100%;
+}
+
+@font-face {
+  font-family: VCR;
+  src: url('vcr_osd.ttf');
+}
+
+.osd-sm {
+  font-family: VCR;
+  font-size: 21px;
+}
+
+.osd-md {
+  font-family: VCR;
+  font-size: 39px;
+}
+
+.osd-lg {
+  font-family: VCR;
+  font-size: 59px;
 }

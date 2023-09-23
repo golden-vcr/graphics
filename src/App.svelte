@@ -1,45 +1,48 @@
 <script lang="ts">
   import { onMount, onDestroy } from "svelte";
-  import { AlertClient, type Alert } from "./alerts"
+  import { writable } from "svelte/store";
+  import { AlertToaster, type Alert } from "./alerts"
+  import Toast from "./lib/Toast.svelte";
 
-  let alerts = [] as Alert[]
+  const toast = writable(null as { alert: Alert, durationMs: number } | null)
 
-  let client = null as AlertClient | null
+  let toaster = null as AlertToaster | null
   onMount(() => {
-    client = new AlertClient((alert) => {
-      alerts = [...alerts].concat([alert])
+    toaster = new AlertToaster({
+      onToast(alert, durationMs) {
+        toast.set({ alert, durationMs })
+      },
+      onClear() {
+        toast.set(null)
+      },
     })
+
+    setTimeout(() => {
+      toaster?.simulateAlert({ type: 'follow', data: { username: 'wasabimilkshake' }})
+    }, 50)
+    setTimeout(() => {
+      toaster?.simulateAlert({ type: 'raid', data: { username: 'bigjoebob', numViewers: 23 }})
+    }, 1500)
+
   })
   onDestroy(() => {
-    if (client) {
-      client.stop()
-      client = null
+    if (toaster) {
+      toaster.stop()
+      toaster = null
     }
   })
 </script>
 
 <main>
-  <div>
-{#if alerts.length === 0}
-    <p>No alerts.</p>
-{:else}
-    <p>Alerts:</p>
-    <ul>
-{#each alerts as alert}
-      <li>{JSON.stringify(alert)}</li>
-{/each}
-    </ul>
+{#if $toast}
+  <Toast alert={$toast.alert} />
 {/if}
-  </div>
 </main>
 
 <style>
-  div {
-    display: inline-block;
-    background-color: rgba(0, 0, 0, 0.6);
-    padding: 2rem;
-  }
-  ul li {
-    margin-left: 1rem;
-  }
+main {
+  width: 100%;
+  height: 100%;
+  display: flex;
+}
 </style>
