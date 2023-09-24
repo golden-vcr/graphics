@@ -38,9 +38,9 @@
       chat.simulateEvent({type: 'message', message: {id: "1", username: 'wasabimilkshake', color: '#ffcccc', text: 'hello, this is a message', emotes: []}})
       chat.simulateEvent({type: 'message', message: {id: "2", username: 'wasabimilkshake', color: '#ffcccc', text: 'this is another message', emotes: []}})
       chat.simulateEvent({type: 'message', message: {id: '3', username: 'bigjoebob', color: '#ccffcc', text: 'Hooray, hello', emotes: []}})
-      chat.simulateEvent({type: 'message', message: {id: '4', username: 'PersonMan', color: '#ccccff', text: 'I spent $$45 today $0', emotes: [{name: 'FrankerZ', url: 'https://static-cdn.jtvnw.net/emoticons/v2/65/default/dark/2.0'}]}})
+      chat.simulateEvent({type: 'message', message: {id: '4', username: 'PersonMan', color: '#ccccff', text: 'I spent $$45 today $0', emotes: [{name: 'FrankerZ', url: 'https://static-cdn.jtvnw.net/emoticons/v2/65/default/dark/1.0'}]}})
       chat.simulateEvent({type: 'message', message: {id: '5', username: 'bigjoebob', color: '#ccffcc', text: 'This is a long message and it has a lot of words and it should be a message that wraps and does not expand the chat div', emotes: []}})
-      chat.simulateEvent({type: 'message', message: {id: '6', username: 'PersonMan', color: '#ccccff', text: 'looooooooong message, like very looooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooong $0 $0 $0 $0', emotes: [{name: 'FrankerZ', url: 'https://static-cdn.jtvnw.net/emoticons/v2/65/default/dark/2.0'}]}})
+      chat.simulateEvent({type: 'message', message: {id: '6', username: 'PersonMan', color: '#ccccff', text: 'looooooooong message, like very looooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooong $0 $0 $0 $0', emotes: [{name: 'FrankerZ', url: 'https://static-cdn.jtvnw.net/emoticons/v2/65/default/dark/1.0'}]}})
       setTimeout(() => {
         chat?.simulateEvent({type: 'message', message: {id: '7', username: 'wasabimilkshake', color: '#ffcccc', text: 'scroll 1', emotes: []}})
         chat?.simulateEvent({type: 'message', message: {id: '8', username: 'wasabimilkshake', color: '#ffcccc', text: 'scroll 2', emotes: []}})
@@ -84,7 +84,7 @@
         chat?.simulateEvent({type: 'clear'})
       }, 9000)
       setTimeout(() => {
-        chat?.simulateEvent({type: 'message', message: {id: '26', username: 'bigjoebob', color: '#ccffcc', text: 'we did it', emotes: []}})
+        chat?.simulateEvent({type: 'message', message: {id: '26', username: 'bigjoebob', color: '#ccffcc', text: 'we did it $0 $1', emotes: [{name: 'tjsontMegaman', url: ''}]}})
       }, 9800)
     }
   })
