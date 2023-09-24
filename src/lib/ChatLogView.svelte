@@ -1,13 +1,13 @@
 <script lang="ts">
-  import { type ChatLine } from "../chat"
+  import { type ChatMessage } from "../chat"
 
-  export let lines: ChatLine[]
+  export let messages: ChatMessage[]
 </script>
 
 <div class="container">
-{#each lines as line}
+{#each messages as message}
   <div class="line">
-    <b style={`color: ${line.color}`}>{line.name}:</b> {line.text}
+    <b style={`color: ${message.color}`}>{message.username}:</b> {message.text}
   </div>
 {/each}
 </div>
