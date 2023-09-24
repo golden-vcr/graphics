@@ -25,7 +25,7 @@ html, body, #app {
 
 @font-face {
   font-family: VCR;
-  src: url('vcr_osd.ttf');
+  src: url('./assets/vcr_osd.ttf');
 }
 
 .osd-sm {

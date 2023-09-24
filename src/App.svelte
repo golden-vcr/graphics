@@ -17,13 +17,14 @@
       },
     })
 
+    /*
     setTimeout(() => {
       toaster?.simulateAlert({ type: 'follow', data: { username: 'wasabimilkshake' }})
-    }, 50)
+    }, 500)
     setTimeout(() => {
       toaster?.simulateAlert({ type: 'raid', data: { username: 'bigjoebob', numViewers: 23 }})
     }, 1500)
-
+    */
   })
   onDestroy(() => {
     if (toaster) {

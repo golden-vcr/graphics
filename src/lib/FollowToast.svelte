@@ -1,5 +1,6 @@
 <script lang="ts">
   import { onMount } from "svelte"
+  import audioUrl from "../assets/tape_insert.mp3"
 
   let audio: HTMLAudioElement
   onMount(() => {
@@ -10,4 +11,4 @@
 </script>
 
 <p class="osd-md">NEW FOLLOW FROM {username}!</p>
-<audio src="tape_insert.mp3" bind:this={audio} />
+<audio src={audioUrl} bind:this={audio} />
