@@ -5,21 +5,15 @@
   export let alert: Alert
 </script>
 
-<div class="video-overlay">
-  <div class="text-bg">
+<div class="text-bg">
 {#if alert.type === 'follow'}
-    <FollowToast username={alert.data.username} />
+  <FollowToast username={alert.data.username} />
 {:else if alert.type == 'raid'}
-    <RaidToast username={alert.data.username} numViewers={alert.data.numViewers} />
+  <RaidToast username={alert.data.username} numViewers={alert.data.numViewers} />
 {/if}
-  </div>
 </div>
 
 <style>
-  .video-overlay {
-    aspect-ratio: 1.33;
-    padding: 4rem;
-  }
   .text-bg {
     padding: 0.5rem;
     background-color: rgba(0, 0, 0, 0.5);
