@@ -67,10 +67,10 @@ function parseChatMessage(data: unknown): ChatMessage {
   const username = obj["username"]
   
   // ChatMessage.color
-  if (typeof obj["color"] !== "string" || obj["color"] === "") {
-    throw new Error("invalid chat message: non-empty 'color' field is required")
+  let color = "#eeeeee"
+  if (typeof obj["color"] === "string" && obj["color"] !== "") {
+    color = obj["color"]
   }
-  const color = obj["color"]
   
   // ChatMessage.text
   if (typeof obj["text"] !== "string" || obj["text"] === "") {
