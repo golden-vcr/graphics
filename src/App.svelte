@@ -1,10 +1,14 @@
 <script lang="ts">
   import { onMount, onDestroy } from "svelte"
   import { writable } from "svelte/store"
+  
   import { AlertToaster, type Alert } from "./alerts"
   import { ChatLog, type ChatMessage } from "./chat"
+  import { initApplicationState } from "./store"
+  
   import Toast from "./lib/Toast.svelte"
   import ChatLogView from "./lib/ChatLogView.svelte"
+  import LowerThird from "./lib/LowerThird.svelte"
 
   const NUM_CHAT_LINES_TO_BUFFER = 50
   const SIMULATE_ALERTS = false
@@ -16,6 +20,8 @@
   let toaster = null as AlertToaster | null
   let chat = null as ChatLog | null
   onMount(() => {
+    initApplicationState()
+
     toaster = new AlertToaster({
       onToast(alert, durationMs) {
         toast.set({ alert, durationMs })
@@ -102,9 +108,14 @@
 
 <main>
   <div class="video-overlay">
+    <div class="lower-third-layer">
+      <LowerThird />
+    </div>
+    <div class="toast-layer">
 {#if $toast}
-    <Toast alert={$toast.alert} />
+      <Toast alert={$toast.alert} />
 {/if}
+    </div>
   </div>
   <div class="sidebar">
     <div class="camera-overlay">
@@ -123,12 +134,28 @@ main {
   overflow: hidden;
 }
 .video-overlay {
-  flex: 1 0 0;
-  padding: 4rem;
+  flex: 1;
   overflow: hidden;
+  position: relative;
+}
+.lower-third-layer {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+}
+.toast-layer {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  padding: 4rem;
+  pointer-events: none;
 }
 .sidebar {
-  flex: 0 0 480px;
+  flex-basis: 25vw;
   display: flex;
   flex-direction: column;
   overflow: hidden;
