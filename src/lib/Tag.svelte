@@ -12,6 +12,7 @@
 <style>
   div {
     border-radius: 4px;
+    font-size: 1.25em;
     line-height: 1;
     padding: 0.3em;
     font-weight: bold;

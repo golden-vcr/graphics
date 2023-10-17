@@ -20,7 +20,7 @@
       }
       dismissTimer = setTimeout(() => {
         dismissed = true
-      }, 8000)
+      }, 10000)
     } else {
       tape = null
       dismissed = false
@@ -86,15 +86,19 @@
     margin-top: 1.8em;
     line-height: 1;
   }
+  .label, .stats {
+    font-size: 1.25em;
+  }
   h1 {
+    font-size: 2.75em;
     border-left: 0.2em solid;
-    padding: 0.4em;
+    padding: 0.2em 0.4em;
     margin-top: 0.2em;
     margin-bottom: 0.2em;
   }
   .tags {
     display: flex;
-    padding: 0.75em 0;
-    gap: 0.375em;
+    padding: 1em 0;
+    gap: 0.5em;
   }
 </style>
