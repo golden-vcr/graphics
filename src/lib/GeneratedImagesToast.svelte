@@ -2,6 +2,7 @@
   import { onMount } from "svelte"
 
   import { computeImageProgress, IMAGE_DURATION_MS } from "../alerts/images"
+  import GeneratedImage from "./GeneratedImage.svelte";
 
   export let layer: string
   export let username: string
@@ -10,9 +11,8 @@
 
   let currentImageIndex = 0
   let currentImageElapsed: DOMHighResTimeStamp = 0.0
-  $: currentImageUrl = imageUrls[currentImageIndex]
+  let currentImageProgress = 0.0
 
-  let img: HTMLImageElement
   let rid: number
   let lastUpdateTimestamp: DOMHighResTimeStamp = 0.0
   function update(timestamp: DOMHighResTimeStamp) {
@@ -20,26 +20,15 @@
     currentImageElapsed += deltaTime
     lastUpdateTimestamp = timestamp
 
-    let t = 0.0
-    if (currentImageElapsed > IMAGE_DURATION_MS) {
+    if (currentImageElapsed < IMAGE_DURATION_MS) {
+      currentImageProgress = computeImageProgress(currentImageElapsed)
+    } else if (currentImageIndex < imageUrls.length - 1) {
       currentImageElapsed = 0.0
-      if (currentImageIndex === imageUrls.length -1 ) {
-        return
-      }
+      currentImageProgress = 0.0
       currentImageIndex++
     } else {
-      t = computeImageProgress(currentImageElapsed)
+      return
     }
-
-    const scrollDirection = currentImageIndex % 2 === 0 ? 'down' : 'up'    
-    
-    const opacity = 100.0 - (Math.random() * 20.0)
-    const xJitter = Math.random() * 5.0 * t
-    const yScroll = 40.0 * (scrollDirection === 'up' ? t : (1.0 - t))
-
-    img.style.setProperty('opacity', `${opacity}%`)
-    img.style.setProperty('right', `${xJitter}%`)
-    img.style.setProperty('bottom', `${yScroll}%`)
     rid = requestAnimationFrame(update)
   }
 
@@ -53,7 +42,12 @@
 
 <div class="container">
 {#if layer === 'screen'}
-  <img bind:this={img} src={currentImageUrl} alt="foo" />
+  <GeneratedImage
+    url={imageUrls[currentImageIndex]}
+    {description}
+    progress={currentImageProgress}
+    scrollDirection={currentImageIndex % 2 === 0 ? 'down' : 'up'}
+  />
 {:else}
 <div class="osd-safe">
   <div class="osd-bg">
