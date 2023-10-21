@@ -22,14 +22,15 @@
 
     if (currentImageElapsed < IMAGE_DURATION_MS) {
       currentImageProgress = computeImageProgress(currentImageElapsed)
-    } else if (currentImageIndex < imageUrls.length - 1) {
+    } else {
       currentImageElapsed = 0.0
       currentImageProgress = 0.0
       currentImageIndex++
-    } else {
-      return
     }
-    rid = requestAnimationFrame(update)
+
+    if (currentImageIndex < imageUrls.length) {
+      rid = requestAnimationFrame(update)
+    }
   }
 
   onMount(() => {
@@ -42,12 +43,21 @@
 
 <div class="container">
 {#if layer === 'screen'}
-  <GeneratedImage
-    url={imageUrls[currentImageIndex]}
-    {description}
-    progress={currentImageProgress}
-    scrollDirection={currentImageIndex % 2 === 0 ? 'down' : 'up'}
-  />
+  <div class="frame">
+{#each imageUrls as url, i}
+    <GeneratedImage
+      url={url}
+      {description}
+      fadeOpacity={i === currentImageIndex ? 100.0 : 0.0}
+      progress={
+        i < currentImageIndex
+          ? computeImageProgress(IMAGE_DURATION_MS)
+          : (i > currentImageIndex ? 0.0 : currentImageProgress)
+      }
+      scrollDirection={i % 2 === 0 ? 'down' : 'up'}
+    />
+{/each}
+  </div>
 {:else}
 <div class="osd-safe">
   <div class="osd-bg">
@@ -63,11 +73,10 @@
 <style>
   .container {
     flex: 1;
+    display: flex;
   }
-  img {
-    width: 105%;
+  .frame {
+    flex: 1;
     position: relative;
-    right: 5%;
-    bottom: 0%;
   }
 </style>
