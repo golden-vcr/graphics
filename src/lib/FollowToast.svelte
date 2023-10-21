@@ -2,12 +2,12 @@
   import { onMount } from "svelte"
   import audioUrl from "../assets/tape_insert.mp3"
 
+  export let username: string
+
   let audio: HTMLAudioElement
   onMount(() => {
     audio.play()
   })
-
-  export let username: string
 </script>
 
 <div class="osd-safe">

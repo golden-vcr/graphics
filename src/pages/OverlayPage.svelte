@@ -8,9 +8,11 @@
   import Toast from "../lib/Toast.svelte"
   import LowerThird from "../lib/LowerThird.svelte"
 
-  const SIMULATE_ALERTS = true
+  const SIMULATE_ALERTS = false
 
   const toast = writable(null as { alert: Alert, durationMs: number } | null)
+
+  const layer = new URLSearchParams(window.location.search).get('layer') || 'normal'
 
   let toaster = null as AlertToaster | null
   onMount(() => {
@@ -56,7 +58,7 @@
   </div>
   <div class="toast-layer">
 {#if $toast}
-    <Toast alert={$toast.alert} />
+    <Toast alert={$toast.alert} {layer} />
 {/if}
   </div>
 </main>

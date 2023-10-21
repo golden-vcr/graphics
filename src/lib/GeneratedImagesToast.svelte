@@ -1,11 +1,23 @@
 <script lang="ts">
+  export let layer: string
   export let username: string
   export let description: string
   export let imageUrls: string[]
 </script>
 
 <div class="container">
+{#if layer === 'screen'}
   <img class="slide-up" src={imageUrls[0]} alt="foo" />
+{:else}
+<div class="osd-safe">
+  <div class="osd-bg">
+    <p class="osd-md">{username} WISHES TO SHARE:</p>
+  </div>
+  <div class="osd-bg" style="margin-top: 1rem">
+    <p class="osd-md">{description}!</p>
+  </div>
+</div>
+{/if}
 </div>
 
 <style>
@@ -17,12 +29,9 @@
     position: relative;
     right: 5%;
   }
-  .slide-up, .slide-down {
-    animation: slide-up 2s cubic-bezier(0, 1, 0, 1, 0, 1, 0, 1);
+  .slide-up {
+    animation: slide-up 5s;
     animation-fill-mode: forwards;
-  }
-  .slide-down {
-    animation-direction: reverse;
   }
   @keyframes slide-up {
     from {
