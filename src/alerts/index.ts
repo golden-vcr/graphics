@@ -92,6 +92,9 @@ export class AlertToaster {
   }
 
   private getToastDuration(alert: Alert): number {
+    if (alert.type === 'generated-images') {
+      return 15000
+    }
     if (alert.type === 'raid') {
       return 12000
     }

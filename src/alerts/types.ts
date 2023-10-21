@@ -1,6 +1,7 @@
 export type Alert = 
     { type: 'follow', data: AlertDataFollow }
   | { type: 'raid', data: AlertDataRaid }
+  | { type: 'generated-images', data: AlertDataGeneratedImages }
 
 export type AlertDataFollow = {
   username: string
@@ -9,6 +10,12 @@ export type AlertDataFollow = {
 export type AlertDataRaid = {
   username: string
   numViewers: number
+}
+
+export type AlertDataGeneratedImages = {
+  username: string
+  description: string
+  urls: string[]
 }
 
 export function parseAlert(data: unknown): Alert {
@@ -29,6 +36,8 @@ export function parseAlert(data: unknown): Alert {
       return { type, data: parseAlertDataFollow(obj["data"]) }
     case 'raid':
       return { type, data: parseAlertDataRaid(obj["data"]) }
+    case 'generated-images':
+      return { type, data: parseAlertDataGeneratedImages(obj["data"]) }
   }
   throw new Error(`invalid alert: unrecognized type '${type}'`)
 }
@@ -67,4 +76,40 @@ function parseAlertDataRaid(data: unknown): AlertDataRaid {
   const numViewers = obj["numViewers"]
   
   return { username, numViewers }
+}
+
+function parseAlertDataGeneratedImages(data: unknown): AlertDataGeneratedImages {
+  if (typeof data !== "object") {
+    throw new Error("invalid data for generated images alert: data is not an object")
+  }
+  const obj = data as { [key: string]: unknown }
+
+  // AlertDataGeneratedImages.username
+  if (typeof obj["username"] !== "string" || obj["username"] === "") {
+    throw new Error("invalid data for generated images alert: non-empty 'username' field is required")
+  }
+  const username = obj["username"]
+
+  // AlertDataGeneratedImages.description
+  if (typeof obj["description"] !== "string" || obj["description"] === "") {
+    throw new Error("invalid data for generated images alert: non-empty 'description' field is required")
+  }
+  const description = obj["description"]
+
+  // AlertDataGeneratedImages.urls
+  const urls = [] as string[]
+  if (!Array.isArray(obj["urls"])) {
+    throw new Error("invalid data for generated images alert: 'urls' array is required")
+  }
+  for (const url of obj["urls"]) {
+    if (typeof url !== "string" || !url) {
+      throw new Error("invalid data for generated images alert: all items in 'urls' array must be non-empty strings")
+    }
+    urls.push(url)
+  }
+  if (urls.length === 0) {
+    throw new Error("invalid data for generated images alert: 'urls' array must have at least one item")
+  }
+  
+  return { username, description, urls }
 }
