@@ -1,13 +1,53 @@
 <script lang="ts">
+  import { onMount } from "svelte"
+
   export let layer: string
   export let username: string
   export let description: string
   export let imageUrls: string[]
+
+  const imageDuration = 0.5
+  const imageDurationTail = 0.1
+
+  let currentImageIndex = 0
+  let currentImageElapsed: DOMHighResTimeStamp = 0.0
+  $: currentImageUrl = imageUrls[currentImageIndex]
+
+  let img: HTMLImageElement
+  let rid: number
+  let lastUpdateTimestamp: DOMHighResTimeStamp = 0.0
+  function update(timestamp: DOMHighResTimeStamp) {
+    const deltaTime = lastUpdateTimestamp ? (timestamp - lastUpdateTimestamp) : 0.0
+    lastUpdateTimestamp = timestamp
+    currentImageElapsed += (deltaTime / 1000.0)
+    const t = Math.abs(Math.sin((0.5 * Math.PI * currentImageElapsed) / (imageDuration - imageDurationTail)))
+
+    if (currentImageElapsed > imageDuration) {
+      currentImageElapsed = 0.0
+      currentImageIndex++
+    }
+
+    const scrollDirection = currentImageIndex % 2 === 0 ? 'down' : 'up'
+    
+    const xJitter = Math.random() * 5.0 * t
+    const yScroll = 40.0 * (scrollDirection === 'up' ? t : (1.0 - t))
+
+    img.style.setProperty('right', `${xJitter}%`)
+    img.style.setProperty('bottom', `${yScroll}%`)
+    rid = requestAnimationFrame(update)
+  }
+
+  onMount(() => {
+    if (layer === 'screen') {
+      rid = requestAnimationFrame(update)
+      return () => cancelAnimationFrame(rid)
+    }
+  })
 </script>
 
 <div class="container">
 {#if layer === 'screen'}
-  <img class="slide-up" src={imageUrls[0]} alt="foo" />
+  <img bind:this={img} src={currentImageUrl} alt="foo" />
 {:else}
 <div class="osd-safe">
   <div class="osd-bg">
@@ -25,20 +65,9 @@
     flex: 1;
   }
   img {
-    width: 110%;
+    width: 105%;
     position: relative;
     right: 5%;
-  }
-  .slide-up {
-    animation: slide-up 5s;
-    animation-fill-mode: forwards;
-  }
-  @keyframes slide-up {
-    from {
-      bottom: 0%;
-    }
-    to {
-      bottom: 47%;
-    }
+    bottom: 0%;
   }
 </style>
