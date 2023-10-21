@@ -81,6 +81,13 @@
 <style>
   .line {
     background-color: rgba(0, 0, 0, 0.7);
+    border-bottom: 2px solid rgba(0, 0, 0, 0.375);
+    border-left: 2px solid rgba(0, 0, 0, 0.375);
     font-size: 22px;
+    line-height: 1.25;
+    padding: 0.25rem;
+  }
+  .line:last-child {
+    padding-bottom: 1rem;
   }
 </style>
