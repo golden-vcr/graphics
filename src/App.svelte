@@ -151,7 +151,7 @@ main {
   right: 0;
   top: 0;
   bottom: 0;
-  padding: 4rem;
+  display: flex;
   pointer-events: none;
 }
 .sidebar {

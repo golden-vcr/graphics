@@ -11,6 +11,10 @@
   export let numViewers: number
 </script>
 
-<p class="osd-md">INCOMING RAID FROM {username}!</p>
-<p class="osd-md">WELCOME, {numViewers} VIEWERS.</p>
+<div class="osd-safe">
+  <div class="osd-bg">
+    <p class="osd-md">INCOMING RAID FROM {username}!</p>
+    <p class="osd-md">WELCOME, {numViewers} VIEWERS.</p>
+  </div>
+</div>
 <audio src={audioUrl} bind:this={audio} />

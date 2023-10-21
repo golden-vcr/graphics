@@ -28,6 +28,16 @@ html, body, #app {
   src: url('./assets/vcr_osd.ttf');
 }
 
+.osd-safe {
+  padding: 4rem;
+}
+
+.osd-bg {
+  padding: 0.5rem;
+  background-color: rgba(0, 0, 0, 0.5);
+  line-height: 1.0;
+}
+
 .osd-sm {
   font-family: VCR;
   font-size: 21px;
