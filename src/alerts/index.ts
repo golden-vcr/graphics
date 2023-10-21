@@ -1,4 +1,5 @@
 import { parseAlert, type Alert } from "./types"
+import { getImageAlertDuration } from "./images"
 
 export { type Alert } from "./types"
 
@@ -93,7 +94,7 @@ export class AlertToaster {
 
   private getToastDuration(alert: Alert): number {
     if (alert.type === 'generated-images') {
-      return 15000
+      return getImageAlertDuration(alert.data.urls.length)
     }
     if (alert.type === 'raid') {
       return 12000

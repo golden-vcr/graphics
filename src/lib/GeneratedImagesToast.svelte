@@ -1,13 +1,12 @@
 <script lang="ts">
   import { onMount } from "svelte"
 
+  import { computeImageProgress, IMAGE_DURATION_MS } from "../alerts/images"
+
   export let layer: string
   export let username: string
   export let description: string
   export let imageUrls: string[]
-
-  const imageDuration = 0.5
-  const imageDurationTail = 0.1
 
   let currentImageIndex = 0
   let currentImageElapsed: DOMHighResTimeStamp = 0.0
@@ -18,20 +17,27 @@
   let lastUpdateTimestamp: DOMHighResTimeStamp = 0.0
   function update(timestamp: DOMHighResTimeStamp) {
     const deltaTime = lastUpdateTimestamp ? (timestamp - lastUpdateTimestamp) : 0.0
+    currentImageElapsed += deltaTime
     lastUpdateTimestamp = timestamp
-    currentImageElapsed += (deltaTime / 1000.0)
-    const t = Math.abs(Math.sin((0.5 * Math.PI * currentImageElapsed) / (imageDuration - imageDurationTail)))
 
-    if (currentImageElapsed > imageDuration) {
+    let t = 0.0
+    if (currentImageElapsed > IMAGE_DURATION_MS) {
       currentImageElapsed = 0.0
+      if (currentImageIndex === imageUrls.length -1 ) {
+        return
+      }
       currentImageIndex++
+    } else {
+      t = computeImageProgress(currentImageElapsed)
     }
 
-    const scrollDirection = currentImageIndex % 2 === 0 ? 'down' : 'up'
+    const scrollDirection = currentImageIndex % 2 === 0 ? 'down' : 'up'    
     
+    const opacity = 100.0 - (Math.random() * 20.0)
     const xJitter = Math.random() * 5.0 * t
     const yScroll = 40.0 * (scrollDirection === 'up' ? t : (1.0 - t))
 
+    img.style.setProperty('opacity', `${opacity}%`)
     img.style.setProperty('right', `${xJitter}%`)
     img.style.setProperty('bottom', `${yScroll}%`)
     rid = requestAnimationFrame(update)

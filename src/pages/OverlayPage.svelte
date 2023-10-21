@@ -8,7 +8,7 @@
   import Toast from "../lib/Toast.svelte"
   import LowerThird from "../lib/LowerThird.svelte"
 
-  const SIMULATE_ALERTS = false
+  const SIMULATE_ALERTS = true
 
   const toast = writable(null as { alert: Alert, durationMs: number } | null)
 
@@ -28,12 +28,14 @@
     })
 
     if (SIMULATE_ALERTS) {
+      /*
       setTimeout(() => {
         toaster?.simulateAlert({ type: 'follow', data: { username: 'wasabimilkshake' }})
       }, 1000)
       setTimeout(() => {
         toaster?.simulateAlert({ type: 'raid', data: { username: 'bigjoebob', numViewers: 23 }})
       }, 1500)
+      */
       setTimeout(() => {
         toaster?.simulateAlert({ type: 'generated-images', data: { username: 'wasabimilkshake', description: 'a seal', urls: [
           'https://golden-vcr-user-images.nyc3.digitaloceanspaces.com/0f201969-83c5-413b-8116-d50b60c451ec/0f201969-83c5-413b-8116-d50b60c451ec-00.jpg',
