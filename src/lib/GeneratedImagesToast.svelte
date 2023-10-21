@@ -61,10 +61,11 @@
 {:else}
 <div class="osd-safe">
   <div class="osd-bg">
-    <p class="osd-md">{username} WISHES TO SHARE:</p>
+    <p class="osd-md">INCOMING TRANSMISSION FROM:<br />{username}</p>
   </div>
+  <div class="spacer" />
   <div class="osd-bg" style="margin-top: 1rem">
-    <p class="osd-md">{description}!</p>
+    <p class="osd-md">&lt;&lt; {description} &gt;&gt;</p>
   </div>
 </div>
 {/if}
@@ -78,5 +79,14 @@
   .frame {
     flex: 1;
     position: relative;
+  }
+  .osd-safe {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    text-align: center;
+  }
+  .spacer {
+    flex: 1;
   }
 </style>
