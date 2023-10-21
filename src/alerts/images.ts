@@ -1,3 +1,6 @@
+// How long to hold on the onscreen alert text before we start showing images
+export const INTRO_DURATION_MS = 2000
+
 // How long each image is held onscreen before we switch to the next image
 export const IMAGE_DURATION_MS = 500
 
@@ -6,12 +9,15 @@ export const IMAGE_DURATION_MS = 500
 // to scroll completely across the screen from top to bottom (or bottom to top)
 export const IMAGE_DURATION_TAIL_MS = 100
 
+// How long to hold on the outro alert text after images are finished
+export const OUTRO_DURATION_MS = 6000
+
 /**
  * Returns the total duration for which a GeneratedImagesToast should be rendered, given
  * some basic information about the alert.
  */
 export function getImageAlertDuration(numImages: number): number {
-  return IMAGE_DURATION_MS * numImages
+  return INTRO_DURATION_MS + (IMAGE_DURATION_MS * numImages) + OUTRO_DURATION_MS
 }
 
 export function computeImageProgress(elapsed: number): number {

@@ -1,13 +1,13 @@
 <script lang="ts">
   import { onMount } from "svelte"
 
-  import { computeImageProgress, IMAGE_DURATION_MS } from "../alerts/images"
+  import { computeImageProgress, INTRO_DURATION_MS, IMAGE_DURATION_MS } from "../alerts/images"
   import GeneratedImage from "./GeneratedImage.svelte";
 
   export let description: string
   export let imageUrls: string[]
 
-  let currentImageIndex = 0
+  let currentImageIndex = -1
   let currentImageElapsed: DOMHighResTimeStamp = 0.0
   let currentImageProgress = 0.0
 
@@ -32,8 +32,14 @@
   }
 
   onMount(() => {
-    rid = requestAnimationFrame(update)
-    return () => cancelAnimationFrame(rid)
+    const timer = setTimeout(() => {
+      currentImageIndex++
+      rid = requestAnimationFrame(update)
+    }, INTRO_DURATION_MS)
+    return () => {
+      clearTimeout(timer)
+      cancelAnimationFrame(rid)
+    }
   })
 </script>
 

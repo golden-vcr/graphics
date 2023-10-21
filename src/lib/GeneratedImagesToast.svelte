@@ -12,7 +12,7 @@
 {#if layer === 'screen'}
   <GeneratedImagesScreenLayer {description} {imageUrls} />
 {:else}
-  <GeneratedImagesNormalLayer {username} {description} />
+  <GeneratedImagesNormalLayer {username} {description} numImages={imageUrls.length} />
 {/if}
 </div>
 
