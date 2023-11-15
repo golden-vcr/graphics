@@ -2,7 +2,7 @@
 export const INTRO_DURATION_MS = 2000
 
 // How long each image is held onscreen before we switch to the next image
-export const IMAGE_DURATION_MS = 500
+export const IMAGE_DURATION_MS = 800
 
 // Duration at the tail end of that time, during which the image reverses direction;
 // i.e. (IMAGE_DURATION_MS - IMAGE_DURATION_TAIL_MS) is how long it will take the image
