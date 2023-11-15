@@ -1,13 +1,24 @@
 <script lang="ts">
-  import { onMount } from "svelte"
-  import { type ChatMessage } from "../chat";
-  export let message: ChatMessage
-  let textSpan: HTMLSpanElement
+  import { type ChatMessage } from '../chat'
+  import ChatLogLineTextSpan from './ChatLogLineTextSpan.svelte'
+  import ChatLogLineEmoteImage from './ChatLogLineEmoteImage.svelte'
 
-  onMount(() => {
+  export let message: ChatMessage
+
+  type LineElement = {
+    type: 'text'
+    text: string
+    isMissingEmote?: boolean
+  } | {
+    type: 'emote'
+    url: string
+    name: string
+  }
+
+  function renderMessage(m: ChatMessage): LineElement[] {
     // Build an array of elements making up our message: i.e. spans of text
     // interspersed with emote images
-    const elems = [] as HTMLElement[]
+    const elems = [] as LineElement[]
 
     // Sanitize any literal dollar signs which have been escaped as double-dollar
     let s = message.text.replaceAll('$$', '\ufffd')
@@ -20,9 +31,7 @@
       const match = s.match(/\$(\d+)/)
       if (!match) {
         if (s.length > 0) {
-          const span: HTMLSpanElement = document.createElement('span')
-          span.innerText = s.replaceAll('\ufffd', '$')
-          elems.push(span)
+          elems.push({ type: 'text', text: s.replaceAll('\ufffd', '$') })
         }
         break
       }
@@ -31,9 +40,7 @@
       // as a span
       const prefix = s.slice(0, match.index)
       if (prefix.length > 0) {
-        const span: HTMLSpanElement = document.createElement('span')
-        span.innerText = prefix.replaceAll('\ufffd', '$')
-        elems.push(span)
+        elems.push({ type: 'text', text: prefix.replaceAll('\ufffd', '$') })
       }
 
       // Update our string to chop off any prefix along with the placeholder we found
@@ -46,36 +53,34 @@
       if (emote) {
         if (emote.url) {
           // If we have a URL for the emote, render it as an image
-          const img: HTMLImageElement = document.createElement('img')
-          img.src = emote.url
-          img.alt = emote.name
-          elems.push(img)
+          elems.push({ type: 'emote', url: emote.url, name: emote.name })
         } else {
           // We know the emote name but we failed to resolve an image URL, so render
           // the emote name in a span
-          const span: HTMLSpanElement = document.createElement('span')
-          span.className = 'missing-emote'
-          span.innerText = `{${emote.name}}`
-          elems.push(span)
+          elems.push({ type: 'text', text: `{${emote.name}}`, isMissingEmote: true })
         }
       } else {
         // The placeholder indicates an invalid emote index
-        const span: HTMLSpanElement = document.createElement('span')
-        span.className = 'missing-emote'
-        span.innerText = '{{bad emote}}'
-        elems.push(span)
+        elems.push({ type: 'text', text: `{{bad emote}}`, isMissingEmote: true })
       }
     }
-
-    // Add all the elements that make up our message
-    for (const elem of elems) {
-      textSpan.appendChild(elem)
-    }
-  })
+    return elems
+  }
 </script>
 
 <div class="line">
-  <b style={`color: ${message.color}`}>{message.username}:</b> <span bind:this={textSpan} />
+  <b style={`color: ${message.color}`}>{message.username}:</b>
+  <span>
+{#each renderMessage(message) as elem}
+{#if elem.type === 'text'}
+    <ChatLogLineTextSpan text={elem.text} isMissingEmote={!!elem.isMissingEmote} />
+{:else if elem.type === 'emote'}
+    <ChatLogLineEmoteImage url={elem.url} name={elem.name} />
+{:else}
+    <b>Unrecognized chat line element: {JSON.stringify(elem)}</b>
+{/if}
+{/each}
+  </span>
 </div>
 
 <style>
