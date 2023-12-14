@@ -1,20 +1,23 @@
 <script lang="ts">
+  import { type Offset, type ImageProperties } from "../alerts/animation"
+
   export let url: string
   export let description: string
-  export let fadeOpacity: number
-  export let progress: number
-  export let scrollDirection: 'up' | 'down'
+  export let properties: ImageProperties
+  export let show: boolean
 
-  $: opacity = (100.0 - (Math.random() * 20 + (progress * 0.001))) * fadeOpacity
-  $: xJitter = Math.random() * 5.0 * progress
-  $: yScroll = 40.0 * (scrollDirection === 'up' ? progress : (1.0 - progress))
+  function offsetToTranslate(offset: Offset): string {
+    const xPercent = 200 * offset.x - 100
+    const yPercent = 200 * offset.y - 100
+    return `translateX(${xPercent}%) translateY(${yPercent}%)`
+  }
 </script>
 
 <div>
   <img
     src={url}
     alt={`generated image of ${description}`}
-    style={`opacity: ${opacity}%; right: ${xJitter}%; bottom: ${yScroll}%`}
+    style={`opacity: ${show ? properties.opacity * 100 : 0}%; transform: scale(${properties.scale * 100}%) ${offsetToTranslate(properties.offset)}`}
   />
 </div>
 
@@ -28,9 +31,8 @@
     mix-blend-mode: screen;
   }
   img {
-    width: 105%;
+    width: 100%;
     position: relative;
-    right: 5%;
-    bottom: 0%;
+    bottom: 16.7%;
   }
 </style>

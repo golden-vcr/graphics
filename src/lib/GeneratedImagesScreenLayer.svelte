@@ -1,29 +1,43 @@
 <script lang="ts">
   import { onMount } from "svelte"
 
-  import { computeImageProgress, INTRO_DURATION_MS, IMAGE_DURATION_MS } from "../alerts/images"
-  import GeneratedImage from "./GeneratedImage.svelte";
+  import { type ImageProperties } from "../alerts/animation"
+  import { INTRO_DURATION_MS, IMAGE_ANIMATIONS, IMAGE_ANIMATION_CURVES } from "../alerts/images"
+  import GeneratedImage from "./GeneratedImage.svelte"
 
   export let description: string
   export let imageUrls: string[]
 
   let currentImageIndex = -1
-  let currentImageElapsed: DOMHighResTimeStamp = 0.0
-  let currentImageProgress = 0.0
+  let currentAnimationIndex = -1
+  let currentAnimationElapsed: DOMHighResTimeStamp = 0.0
 
+  let properties: ImageProperties = {
+    scale: 1,
+    offset: {x: 0.5, y: 0.5},
+    opacity: 0,
+    background: 0.5,
+  }
   let rid: number
   let lastUpdateTimestamp: DOMHighResTimeStamp = 0.0
   function update(timestamp: DOMHighResTimeStamp) {
     const deltaTime = lastUpdateTimestamp ? (timestamp - lastUpdateTimestamp) : 0.0
-    currentImageElapsed += deltaTime
+    currentAnimationElapsed += deltaTime
     lastUpdateTimestamp = timestamp
 
-    if (currentImageElapsed < IMAGE_DURATION_MS) {
-      currentImageProgress = computeImageProgress(currentImageElapsed)
+    const anim = IMAGE_ANIMATIONS[currentAnimationIndex]
+    const curves = IMAGE_ANIMATION_CURVES[currentAnimationIndex]
+    if (currentAnimationElapsed < anim.durationMs) {
+      properties = curves.sample(currentAnimationElapsed)
     } else {
-      currentImageElapsed = 0.0
-      currentImageProgress = 0.0
-      currentImageIndex++
+      if (currentAnimationIndex + 1 == IMAGE_ANIMATIONS.length) {
+        currentImageIndex++
+        currentAnimationIndex = 0
+        currentAnimationElapsed = 0.0
+      } else {
+        currentAnimationIndex++
+        currentAnimationElapsed = 0.0
+      }
     }
 
     if (currentImageIndex < imageUrls.length) {
@@ -34,6 +48,8 @@
   onMount(() => {
     const timer = setTimeout(() => {
       currentImageIndex++
+      currentAnimationIndex = 0
+      currentAnimationElapsed = 0.0
       rid = requestAnimationFrame(update)
     }, INTRO_DURATION_MS)
     return () => {
@@ -48,13 +64,8 @@
   <GeneratedImage
     url={url}
     {description}
-    fadeOpacity={i === currentImageIndex ? 100.0 : 0.0}
-    progress={
-      i < currentImageIndex
-        ? computeImageProgress(IMAGE_DURATION_MS)
-        : (i > currentImageIndex ? 0.0 : currentImageProgress)
-    }
-    scrollDirection={i % 2 === 0 ? 'down' : 'up'}
+    {properties}
+    show={i === currentImageIndex}
   />
 {/each}
 </div>

@@ -1,7 +1,9 @@
 <script lang="ts">
   import { onMount } from "svelte"
 
-  import { INTRO_DURATION_MS, IMAGE_DURATION_MS, IMAGE_DURATION_TAIL_MS } from "../alerts/images"
+  import { type ImageProperties } from "../alerts/animation"
+  import { INTRO_DURATION_MS, IMAGE_DURATION_MS, OUTRO_DURATION_MS } from "../alerts/images"
+  import { IMAGE_ANIMATIONS, IMAGE_ANIMATION_CURVES } from "../alerts/images"
   import audioUrl from "../assets/vcr_hum_vocoder.mp3"
 
   export let username: string
@@ -17,8 +19,8 @@
   })
 
   onMount(() => {
-    const showDescriptionAfter = INTRO_DURATION_MS + (IMAGE_DURATION_MS * numImages)
-    const clearAlertTextAfter = showDescriptionAfter - IMAGE_DURATION_TAIL_MS
+    const showDescriptionAfter = INTRO_DURATION_MS + (IMAGE_DURATION_MS * (numImages - 1)) + (IMAGE_ANIMATIONS.slice(0, IMAGE_ANIMATIONS.length - 1).reduce((acc, x) => acc + x.durationMs, 0)) + OUTRO_DURATION_MS
+    const clearAlertTextAfter = INTRO_DURATION_MS + (IMAGE_ANIMATIONS[0].durationMs) + 500
 
     const clearAlertTextTimer = setTimeout(() => { showAlertText = false }, clearAlertTextAfter)
     const showDescriptionTimer = setTimeout(() => { showDescription = true }, showDescriptionAfter)
@@ -29,22 +31,35 @@
   })
 
   let currentImageIndex = -1
-  let currentImageElapsed: DOMHighResTimeStamp = 0.0
-  let currentImageBackgroundOpacity = 0.0
+  let currentAnimationIndex = -1
+  let currentAnimationElapsed: DOMHighResTimeStamp = 0.0
 
+  let properties: ImageProperties = {
+    scale: 1,
+    offset: {x: 0.5, y: 0.5},
+    opacity: 0,
+    background: 0,
+  }
   let rid: number
   let lastUpdateTimestamp: DOMHighResTimeStamp = 0.0
   function update(timestamp: DOMHighResTimeStamp) {
     const deltaTime = lastUpdateTimestamp ? (timestamp - lastUpdateTimestamp) : 0.0
-    currentImageElapsed += deltaTime
+    currentAnimationElapsed += deltaTime
     lastUpdateTimestamp = timestamp
 
-    if (currentImageElapsed < IMAGE_DURATION_MS) {
-      currentImageBackgroundOpacity = (currentImageElapsed / IMAGE_DURATION_MS) * 0.8
+    const anim = IMAGE_ANIMATIONS[currentAnimationIndex]
+    const curves = IMAGE_ANIMATION_CURVES[currentAnimationIndex]
+    if (currentAnimationElapsed < anim.durationMs) {
+      properties = curves.sample(currentAnimationElapsed)
     } else {
-      currentImageBackgroundOpacity = 0.0
-      currentImageElapsed = 0.0
-      currentImageIndex++
+      if (currentAnimationIndex + 1 == IMAGE_ANIMATIONS.length) {
+        currentImageIndex++
+        currentAnimationIndex = 0
+        currentAnimationElapsed = 0.0
+      } else {
+        currentAnimationIndex++
+        currentAnimationElapsed = 0.0
+      }
     }
 
     if (currentImageIndex < numImages) {
@@ -54,6 +69,8 @@
   onMount(() => {
     const timer = setTimeout(() => {
       currentImageIndex++
+      currentAnimationIndex = 0
+      currentAnimationElapsed = 0.0
       rid = requestAnimationFrame(update)
     }, INTRO_DURATION_MS)
     return () => {
@@ -63,7 +80,7 @@
   })
 </script>
 
-<div class="osd-safe" style={`background-color: rgba(0, 0, 0, ${currentImageBackgroundOpacity})`}>
+<div class="osd-safe" style={`background-color: rgba(0, 0, 0, ${properties.background})`}>
 {#if showAlertText}
   <div class="osd-bg">
     <p class="osd-md">INCOMING TRANSMISSION FROM:<br />{username}</p>

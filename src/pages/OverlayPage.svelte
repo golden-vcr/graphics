@@ -28,20 +28,19 @@
     })
 
     if (SIMULATE_ALERTS) {
+      /*
       setTimeout(() => {
         toaster?.simulateAlert({ type: 'follow', data: { username: 'wasabimilkshake' }})
-      }, 1000)
+      }, 50)
       setTimeout(() => {
         toaster?.simulateAlert({ type: 'raid', data: { username: 'bigjoebob', numViewers: 23 }})
-      }, 1500)
+      }, 100)
+      */
       setTimeout(() => {
-        toaster?.simulateAlert({ type: 'generated-images', data: { username: 'wasabimilkshake', description: 'a seal', urls: [
-          'https://golden-vcr-user-images.nyc3.digitaloceanspaces.com/0f201969-83c5-413b-8116-d50b60c451ec/0f201969-83c5-413b-8116-d50b60c451ec-00.jpg',
-          'https://golden-vcr-user-images.nyc3.digitaloceanspaces.com/0f201969-83c5-413b-8116-d50b60c451ec/0f201969-83c5-413b-8116-d50b60c451ec-01.jpg',
-          'https://golden-vcr-user-images.nyc3.digitaloceanspaces.com/0f201969-83c5-413b-8116-d50b60c451ec/0f201969-83c5-413b-8116-d50b60c451ec-02.jpg',
-          'https://golden-vcr-user-images.nyc3.digitaloceanspaces.com/0f201969-83c5-413b-8116-d50b60c451ec/0f201969-83c5-413b-8116-d50b60c451ec-03.jpg',
+        toaster?.simulateAlert({ type: 'generated-images', data: { username: 'wasabimilkshake', description: 'a trumpet sticking out a human tongue', urls: [
+          'https://golden-vcr-user-images.nyc3.digitaloceanspaces.com/f5f92208-0211-4b72-b3da-a747c2e9ada5/f5f92208-0211-4b72-b3da-a747c2e9ada5-00.jpg',
         ]}})
-      }, 1600)
+      }, 160)
     }
   })
   onDestroy(() => {
