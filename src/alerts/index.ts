@@ -99,7 +99,10 @@ export class AlertToaster {
     if (alert.type === 'raid') {
       return 12000
     }
-    return 8000
+    if (alert.type === 'subscribe' || alert.type === 'gift-sub') {
+      return 10000
+    }
+    return 6000
   }
 
   private getToastInterval(alert: Alert): number {
