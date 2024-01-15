@@ -3,21 +3,21 @@ import { type ImageAnimation, ImageAnimationCurves, buildImageAnimationCurves } 
 export const IMAGE_ANIMATIONS: ImageAnimation[] = [
   {
     // Pan left across bottom half of image
-    durationMs: 2000,
+    durationMs: 1300,
     scale: [1.5],
     offset: [{x: 0.43, y: 0.38}, {x: 0.57, y: 0.38}],
-    opacity: [1.0],
-    background: [0.0, 0.9, 0.7],
+    opacity: [0.7, 0.8],
+    background: [0.0, 0.7, 0.5],
     fadeInDurationMs: 100,
     fadeOutDurationMs: 100,
   },
   {
     // Zoom out from center of image
-    durationMs: 3000,
+    durationMs: 2200,
     scale: [1.6666, 1.3333],
     offset: [{x: 0.5, y: 0.5}],
-    opacity: [1.0],
-    background: [0.7, 0.9],
+    opacity: [0.8, 0.9],
+    background: [0.5, 0.7],
     fadeInDurationMs: 200,
     fadeOutDurationMs: 100,
   },
@@ -35,11 +35,11 @@ export const IMAGE_ANIMATIONS: ImageAnimation[] = [
   */
   {
     // Pan right across top half of image
-    durationMs: 2000,
+    durationMs: 1300,
     scale: [1.5],
     offset: [{x: 0.57, y: 0.62}, {x: 0.43, y: 0.62}],
-    opacity: [1.0],
-    background: [0.9, 0.7],
+    opacity: [0.8, 0.9],
+    background: [0.7, 0.6],
     fadeInDurationMs: 100,
     fadeOutDurationMs: 100,
   },
@@ -48,8 +48,8 @@ export const IMAGE_ANIMATIONS: ImageAnimation[] = [
     durationMs: 1500,
     scale: [1.2, 1.3333],
     offset: [{x: 0.5, y: 0.4}, {x: 0.5, y: 0.6}],
-    opacity: [1.0],
-    background: [0.7, 0.9],
+    opacity: [0.9, 1.0],
+    background: [0.6, 0.9],
     fadeInDurationMs: 200,
     fadeOutDurationMs: 200,
   },
