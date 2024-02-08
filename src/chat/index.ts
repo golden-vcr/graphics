@@ -1,14 +1,14 @@
 import { type Writable, type Readable } from "svelte/store"
 
-import { parseChatEvent, type ChatEvent, type ChatMessage } from "./types"
+import { parseChatEvent, type ChatEvent, type ChatPayloadAppend } from "./types"
 
-export { type ChatEvent, type ChatMessage } from "./types"
+export { type ChatEvent, type ChatPayloadAppend } from "./types"
 
 export class ChatClient {
   source: EventSource
   
   constructor(onEvent: (event: ChatEvent) => void) {
-    this.source = new EventSource('/api/showtime/chat')
+    this.source = new EventSource('/api/chatbot/chatlog')
     this.source.addEventListener('message', (ev) => {
       const data = JSON.parse(ev.data)
       const event = parseChatEvent(data)
@@ -24,9 +24,9 @@ export class ChatClient {
 export class ChatLog {
   private _client: ChatClient
   private _capacity: number
-  private _messages: Writable<ChatMessage[]>
+  private _messages: Writable<ChatPayloadAppend[]>
 
-  constructor(capacity: number, messages: Writable<ChatMessage[]>) {
+  constructor(capacity: number, messages: Writable<ChatPayloadAppend[]>) {
     this._capacity = capacity
     this._messages = messages
     this._client = new ChatClient((event) => { this.handleEvent(event) })
@@ -42,16 +42,20 @@ export class ChatLog {
 
   private handleEvent(event: ChatEvent) {
     switch (event.type) {
-    case "message":
+    case "append":
       this._messages.update((prev) => (
-        prev.slice(prev.length - this._capacity - 1).concat([event.message])
+        prev.slice(prev.length - this._capacity - 1).concat([event.payload])
       ))
       break
-    case "deletion":
+    case "delete":
       this._messages.update((prev) => (
-        prev.filter((x) => !event.deletion.messageIds.includes(x.id))
+        prev.filter((x) => x.messageId !== event.payload.messageId)
       ))
       break
+    case "ban":
+      this._messages.update((prev) => (
+        prev.filter((x) => x.userId !== event.payload.userId)
+      ))
     case "clear":
       this._messages.set([])
       break

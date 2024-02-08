@@ -1,9 +1,9 @@
 <script lang="ts">
-  import { type ChatMessage } from '../chat'
+  import { type ChatPayloadAppend } from '../chat'
   import ChatLogLineTextSpan from './ChatLogLineTextSpan.svelte'
   import ChatLogLineEmoteImage from './ChatLogLineEmoteImage.svelte'
 
-  export let message: ChatMessage
+  export let message: ChatPayloadAppend
 
   type LineElement = {
     type: 'text'
@@ -15,7 +15,7 @@
     name: string
   }
 
-  function renderMessage(m: ChatMessage): LineElement[] {
+  function renderMessage(m: ChatPayloadAppend): LineElement[] {
     // Build an array of elements making up our message: i.e. spans of text
     // interspersed with emote images
     const elems = [] as LineElement[]
@@ -68,8 +68,10 @@
   }
 </script>
 
-<div class="line">
+<div class={`line${message.userId === '_BOT_' ? ' bot-reply' : ''}`}>
+{#if message.userId !== '_BOT_'}
   <b style={`color: ${message.color}`}>{message.username}:</b>
+{/if}
   <span>
 {#each renderMessage(message) as elem}
 {#if elem.type === 'text'}
@@ -94,5 +96,9 @@
   }
   .line:last-child {
     padding-bottom: 1rem;
+  }
+  .bot-reply {
+    background-color: rgba(59, 59, 14, 0.7);
+    border: 4px solid rgba(190, 143, 12, 0.375);
   }
 </style>
