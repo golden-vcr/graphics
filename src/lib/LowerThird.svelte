@@ -1,45 +1,19 @@
 <script lang="ts">
   import { slide } from 'svelte/transition'
   import { cubicInOut } from 'svelte/easing'
-  
-  import { state } from '../store'
+
   import { type Tape } from '../tapes'
   import Tag from './Tag.svelte'
 
-  let tape: Tape | null = null
-  let dismissed = false
-
-  let dismissTimer = null as null | ReturnType<typeof setTimeout>
-  state.subscribe((newState) => {
-    if (newState.mode === 'screening') {
-      tape = newState.tape
-      dismissed = false
-
-      if (dismissTimer) {
-        clearTimeout(dismissTimer)
-      }
-      dismissTimer = setTimeout(() => {
-        dismissed = true
-      }, 10000)
-    } else {
-      tape = null
-      dismissed = false
-    }
-  })
+  export let tape: Tape | null
 </script>
 
-{#if tape && !dismissed}
+{#if tape}
 <div
   transition:slide={{ duration: 500, easing: cubicInOut }}
   class="container"
   role="button"
   tabindex="0"
-  on:click={() => {
-    dismissed = true
-  }}
-  on:keypress={() => {
-    dismissed = true
-  }}
 >
   <img src={tape.thumbnailUrl} alt={`Thumbnail for ${tape.title}`} />
   <div class="info">

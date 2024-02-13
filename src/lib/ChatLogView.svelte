@@ -1,8 +1,8 @@
 <script lang="ts">
-  import { type ChatMessage } from "../chat"
+  import { type ChatPayloadAppend } from "../chat"
   import ChatLogLine from "./ChatLogLine.svelte"
 
-  export let messages: ChatMessage[]
+  export let messages: ChatPayloadAppend[]
 </script>
 
 <div class="container">

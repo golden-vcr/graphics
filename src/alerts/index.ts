@@ -1,16 +1,16 @@
-import { parseAlert, type Alert } from "./types"
+import { parseOnscreenEvent, type OnscreenEvent } from "./types"
 import { getImageAlertDuration } from "./images"
 
-export { type Alert } from "./types"
+export { type OnscreenEvent } from "./types"
 
 export class AlertClient {
   source: EventSource
 
-  constructor(onAlert: (alert: Alert) => void) {
-    this.source = new EventSource('/api/showtime/alerts')
+  constructor(onAlert: (alert: OnscreenEvent) => void) {
+    this.source = new EventSource('/api/alerts/events')
     this.source.addEventListener('message', (ev) => {
       const data = JSON.parse(ev.data)
-      const alert = parseAlert(data)
+      const alert = parseOnscreenEvent(data)
       onAlert(alert)
     })
   }
@@ -21,14 +21,14 @@ export class AlertClient {
 }
 
 export type AlertToasterInit = {
-  onToast: (alert: Alert, durationMs: number) => void
+  onToast: (ev: OnscreenEvent, durationMs: number) => void
   onClear: () => void
 }
 
 export class AlertToaster {
   init: AlertToasterInit
   client: AlertClient
-  bufferedAlerts: Alert[]
+  bufferedAlerts: OnscreenEvent[]
 
   clearToastTimer: ReturnType<typeof setTimeout> | null
   checkBufferTimer: ReturnType<typeof setTimeout> | null
@@ -53,11 +53,11 @@ export class AlertToaster {
     this.client.stop()
   }
   
-  simulateAlert(alert: Alert) {
+  simulateAlert(alert: OnscreenEvent) {
     this.onAlert(alert)
   }
 
-  private onAlert(alert: Alert) {
+  private onAlert(alert: OnscreenEvent) {
     // If we have no timer set, no toast is currently in progress
     if (this.checkBufferTimer === null) {
       // Show this alert immediately, and set a timer to check again when done
@@ -68,7 +68,7 @@ export class AlertToaster {
     }
   }
 
-  private fireToast(alert: Alert) {
+  private fireToast(alert: OnscreenEvent) {
     // Fire an onToast notification so the app will display our alert
     const toastDuration = this.getToastDuration(alert)
     this.init.onToast(alert, toastDuration)
@@ -92,20 +92,25 @@ export class AlertToaster {
     }, checkBufferTimerDuration)
   }
 
-  private getToastDuration(alert: Alert): number {
-    if (alert.type === 'generated-images') {
-      return getImageAlertDuration(alert.data.urls.length)
-    }
-    if (alert.type === 'raid') {
-      return 12000
-    }
-    if (alert.type === 'subscribe' || alert.type === 'gift-sub') {
+  private getToastDuration(alert: OnscreenEvent): number {
+    if (alert.type === 'status') {
       return 10000
+    }
+    if (alert.type === 'image') {
+      return getImageAlertDuration(1)
+    }
+    if (alert.type === 'toast') {
+      if (alert.payload.type === 'raided') {
+        return 12000
+      }
+      if (alert.payload.type === 'subscribed' || alert.payload.type === 'gifted-subs') {
+        return 10000
+      }
     }
     return 6000
   }
 
-  private getToastInterval(alert: Alert): number {
+  private getToastInterval(alert: OnscreenEvent): number {
     return 1000
   }
 }

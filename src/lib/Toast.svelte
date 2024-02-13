@@ -1,34 +1,75 @@
 <script lang="ts">
-  import { type Alert } from "../alerts"
+  import { type OnscreenEvent } from "../alerts"
   import FollowToast from "./FollowToast.svelte"
-  import SubscribeToast from "./SubscribeToast.svelte"
-  import GitfSubToast from "./GiftSubToast.svelte"
   import RaidToast from "./RaidToast.svelte"
+  import CheerToast from "./CheerToast.svelte"
+  import SubscribeToast from "./SubscribeToast.svelte"
+  import GiftSubToast from "./GiftSubToast.svelte"
   import GeneratedImagesToast from "./GeneratedImagesToast.svelte"
-  export let alert: Alert
+  export let alert: OnscreenEvent
   export let layer: string
 </script>
 
-{#if alert.type === 'follow'}
+{#if alert.type === 'toast' && alert.payload.type === 'followed'}
 {#if layer === 'normal'}
-<FollowToast {...alert.data} />
+<FollowToast
+  username={alert.payload.viewer.twitchDisplayName}
+/>
 {/if}
 
-{:else if alert.type == 'subscribe'}
+{:else if alert.type === 'toast' && alert.payload.type === 'raided'}
 {#if layer === 'normal'}
-<SubscribeToast {...alert.data} />
+<RaidToast
+  username={alert.payload.viewer.twitchDisplayName}
+  numViewers={alert.payload.data.numViewers}
+/>
 {/if}
 
-{:else if alert.type == 'gift-sub'}
+{:else if alert.type === 'toast' && alert.payload.type === 'cheered'}
 {#if layer === 'normal'}
-<GitfSubToast {...alert.data} />
+<CheerToast
+  username={alert.payload.viewer?.twitchDisplayName || 'Anonymous'}
+  numBits={alert.payload.data.numBits}
+  message={alert.payload.data.message}
+/>
 {/if}
 
-{:else if alert.type == 'raid'}
+{:else if alert.type === 'toast' && alert.payload.type === 'subscribed'}
 {#if layer === 'normal'}
-<RaidToast {...alert.data} />
+<SubscribeToast
+  username={alert.payload.viewer.twitchDisplayName}
+  isGift={false}
+  numCumulativeMonths={1}
+  message={""}
+/>
 {/if}
 
-{:else if alert.type == 'generated-images'}
-<GeneratedImagesToast {layer} username={alert.data.username} description={alert.data.description} imageUrls={alert.data.urls} />
+{:else if alert.type === 'toast' && alert.payload.type === 'resubscribed'}
+{#if layer === 'normal'}
+<SubscribeToast
+  username={alert.payload.viewer.twitchDisplayName}
+  isGift={false}
+  numCumulativeMonths={alert.payload.data.numCumulativeMonths}
+  message={alert.payload.data.message}
+/>
+{/if}
+
+{:else if alert.type === 'toast' && alert.payload.type === 'gifted-subs'}
+{#if layer === 'normal'}
+<GiftSubToast
+  username={alert.payload.viewer?.twitchDisplayName || 'Anonymous'}
+  numSubscriptions={alert.payload.data.numSubscriptions}
+/>
+{/if}
+
+
+{:else if alert.type === 'image'}
+
+<GeneratedImagesToast
+  {layer}
+  username={alert.payload.viewer.twitchDisplayName}
+  description={alert.payload.description}
+  imageUrls={[alert.payload.imageUrl]}
+/>
+
 {/if}

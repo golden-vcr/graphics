@@ -2,25 +2,40 @@
   import { onMount, onDestroy } from "svelte"
   import { writable } from "svelte/store"
   
-  import { AlertToaster, type Alert } from "../alerts"
-  import { initApplicationState } from "../store"
+  import { AlertToaster, type OnscreenEvent } from "../alerts"
+  import { TapeCache, type Tape } from "../tapes"
   
   import Toast from "../lib/Toast.svelte"
   import LowerThird from "../lib/LowerThird.svelte"
 
   const SIMULATE_ALERTS = false
-
-  const toast = writable(null as { alert: Alert, durationMs: number } | null)
+  
+  const tapes = new TapeCache()
+  const tape = writable(null as Tape | null)
+  const toast = writable(null as { alert: OnscreenEvent, durationMs: number } | null)
 
   const layer = new URLSearchParams(window.location.search).get('layer') || 'normal'
 
   let toaster = null as AlertToaster | null
-  onMount(() => {
-    initApplicationState()
+  onMount(async () => {
+    await tapes.init()
 
     toaster = new AlertToaster({
       onToast(alert, durationMs) {
-        toast.set({ alert, durationMs })
+        if (alert.type === 'status') {
+          if (alert.payload.currentTapeId > 0) { 
+            tapes.get(alert.payload.currentTapeId).then((value) => {
+              tape.set(value)
+              setTimeout(() => {
+                tape.set(null)
+              }, 10000)
+            })
+          } else {
+            tape.set(null)
+          }
+        } else {
+          toast.set({ alert, durationMs })
+        }
       },
       onClear() {
         toast.set(null)
@@ -28,18 +43,43 @@
     })
 
     if (SIMULATE_ALERTS) {
-      /*
       setTimeout(() => {
-        toaster?.simulateAlert({ type: 'follow', data: { username: 'wasabimilkshake' }})
+        toaster?.simulateAlert({
+          type: 'toast',
+          payload: {
+            type: 'followed',
+            viewer: {twitchUserId: '90790024', twitchDisplayName: 'wasabimilkshake'}
+          }
+        })
       }, 50)
       setTimeout(() => {
-        toaster?.simulateAlert({ type: 'raid', data: { username: 'bigjoebob', numViewers: 23 }})
-      }, 100)
-      */
+        toaster?.simulateAlert({
+          type: 'status',
+          payload: {
+            currentTapeId: 54,
+          },
+        })
+      }, 60)
       setTimeout(() => {
-        toaster?.simulateAlert({ type: 'generated-images', data: { username: 'wasabimilkshake', description: 'a trumpet sticking out a human tongue', urls: [
-          'https://golden-vcr-user-images.nyc3.digitaloceanspaces.com/f5f92208-0211-4b72-b3da-a747c2e9ada5/f5f92208-0211-4b72-b3da-a747c2e9ada5-00.jpg',
-        ]}})
+        toaster?.simulateAlert({
+          type: 'toast',
+          payload: {
+            type: 'raided',
+            viewer: {twitchUserId: '1337', twitchDisplayName: 'BigJoeBob'},
+            data: {numViewers: 23},
+          },
+        })
+      }, 100)
+      setTimeout(() => {
+        toaster?.simulateAlert({
+          type: 'image',
+          payload: {
+            viewer: {twitchUserId: '90790024', twitchDisplayName: 'wasabimilkshake'},
+            style: 'ghost',
+            description: 'a trumpet sticking out a human tongue',
+            imageUrl: 'https://golden-vcr-user-images.nyc3.digitaloceanspaces.com/f5f92208-0211-4b72-b3da-a747c2e9ada5/f5f92208-0211-4b72-b3da-a747c2e9ada5-00.jpg',
+          }
+        })
       }, 160)
     }
   })
@@ -53,7 +93,9 @@
 
 <main>
   <div class="lower-third-layer">
-    <LowerThird />
+{#if layer === 'normal'}
+    <LowerThird tape={$tape} />
+{/if}    
   </div>
   <div class="toast-layer">
 {#if $toast}

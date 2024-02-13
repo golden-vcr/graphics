@@ -1,187 +1,241 @@
-export type Alert = 
-    { type: 'follow', data: AlertDataFollow }
-  | { type: 'subscribe', data: AlertDataSubscribe }
-  | { type: 'gift-sub', data: AlertDataGiftSub }
-  | { type: 'raid', data: AlertDataRaid }
-  | { type: 'generated-images', data: AlertDataGeneratedImages }
+export type OnscreenEvent =
+    { type: 'status', payload: PayloadStatus }
+  | { type: 'toast', payload: PayloadToast }
+  | { type: 'image', payload: PayloadImage }
 
-export type AlertDataFollow = {
-  username: string
+export type PayloadStatus = {
+  currentTapeId: number
 }
 
-export type AlertDataSubscribe = {
-  username: string
-  isGift: boolean
+export type PayloadToast = 
+    { type: 'followed', viewer: Viewer }
+  | { type: 'raided', viewer: Viewer, data: ToastDataRaided }
+  | { type: 'cheered', viewer: Viewer | null, data: ToastDataCheered }
+  | { type: 'subscribed', viewer: Viewer }
+  | { type: 'resubscribed', viewer: Viewer, data: ToastDataResubscribed }
+  | { type: 'gifted-subs', viewer: Viewer | null, data: ToastDataGiftedSubs }
+
+export type Viewer = {
+  twitchUserId: string
+  twitchDisplayName: string
+}
+
+export type ToastDataRaided = {
+  numViewers: number
+}
+
+export type ToastDataCheered = {
+  numBits: number
+  message: string
+}
+
+export type ToastDataResubscribed = {
   numCumulativeMonths: number
   message: string
 }
 
-export type AlertDataGiftSub = {
-  username: string
+export type ToastDataGiftedSubs = {
   numSubscriptions: number
 }
 
-export type AlertDataRaid = {
-  username: string
-  numViewers: number
-}
-
-export type AlertDataGeneratedImages = {
-  username: string
+export type PayloadImage = {
+  viewer: Viewer
+  style: 'ghost'
   description: string
-  urls: string[]
+  imageUrl: string
 }
 
-export function parseAlert(data: unknown): Alert {
+export function parseOnscreenEvent(data: unknown): OnscreenEvent {
   if (typeof data !== "object") {
-    throw new Error("invalid alert: data is not an object")
+    throw new Error("invalid onscreen event: data is not an object")
   }
   const obj = data as { [key: string]: unknown }
 
-  // Alert.type
+  // OnscreenEvent.type
   if (typeof obj["type"] !== "string" || obj["type"] === "") {
-    throw new Error("invalid alert: non-empty 'type' field is required")
+    throw new Error("invalid onscreen event: non-empty 'type' field is required")
   }
   const type = obj["type"]
 
-  // Alert.data
+  // OnscreenEvent.payload
   switch (type) {
-    case 'follow':
-      return { type, data: parseAlertDataFollow(obj["data"]) }
-    case 'subscribe':
-      return { type, data: parseAlertDataSubscribe(obj["data"]) }
-    case 'gift-sub':
-      return { type, data: parseAlertDataGiftSub(obj["data"]) }
-    case 'raid':
-      return { type, data: parseAlertDataRaid(obj["data"]) }
-    case 'generated-images':
-      return { type, data: parseAlertDataGeneratedImages(obj["data"]) }
+    case 'status':
+      return { type, payload: parsePayloadStatus(obj["payload"]) }
+    case 'toast':
+      return { type, payload: parsePayloadToast(obj["payload"]) }
+    case 'image':
+      return { type, payload: parsePayloadImage(obj["payload"]) }
   }
-  throw new Error(`invalid alert: unrecognized type '${type}'`)
+  throw new Error(`invalid onscreen event: unrecognized type '${type}'`)
 }
 
-function parseAlertDataFollow(data: unknown): AlertDataFollow {
+function parsePayloadStatus(data: unknown): PayloadStatus {
   if (typeof data !== "object") {
-    throw new Error("invalid data for follow alert: data is not an object")
+    throw new Error("invalid status event payload: data is not an object")
   }
   const obj = data as { [key: string]: unknown }
 
-  // AlertDataFollow.username
-  if (typeof obj["username"] !== "string" || obj["username"] === "") {
-    throw new Error("invalid data for follow alert: non-empty 'username' field is required")
+  // PayloadStatus.current_tape_id
+  if (typeof obj["current_tape_id"] !== "number") {
+    throw new Error("invalid status event payload: numeric 'current_tape_id' field is required")
   }
-  const username = obj["username"]
-  
-  return { username }
+  const currentTapeId = obj["current_tape_id"]
+
+  return { currentTapeId }
 }
 
-function parseAlertDataSubscribe(data: unknown): AlertDataSubscribe {
+function parsePayloadToast(data: unknown): PayloadToast {
   if (typeof data !== "object") {
-    throw new Error("invalid data for subscribe alert: data is not an object")
+    throw new Error("invalid toast event payload: data is not an object")
   }
   const obj = data as { [key: string]: unknown }
 
-  // AlertDataSubscribe.username
-  if (typeof obj["username"] !== "string" || obj["username"] === "") {
-    throw new Error("invalid data for subscribe alert: non-empty 'username' field is required")
+  // PayloadToast.type
+  if (typeof obj["type"] !== "string" || obj["type"] === "") {
+    throw new Error("invalid toast event payload: non-empty 'type' field is required")
   }
-  const username = obj["username"]
+  const type = obj["type"]
 
-  // AlertDataSubscribe.isGift
-  if (typeof obj["isGift"] !== "boolean") {
-    throw new Error("invalid data for subscribe alert: boolean 'isGift' field is required")
+  // PayloadToast.viewer | PayloadToast.data
+  switch (type) {
+    case 'followed':
+      return { type, viewer: parseViewer(obj["viewer"]) }
+    case 'raided':
+      return { type, viewer: parseViewer(obj["viewer"]), data: parseToastDataRaided(obj["data"]) }
+    case 'cheered':
+      return { type, viewer: !!obj["viewer"] ? parseViewer(obj["viewer"]) : null, data: parseToastDataCheered(obj["data"]) }
+    case 'subscribed':
+      return { type, viewer: parseViewer(obj["viewer"]) }
+    case 'resubscribed':
+      return { type, viewer: parseViewer(obj["viewer"]), data: parseToastDataResubscribed(obj["data"]) }
+    case 'gifted-subs':
+      return { type, viewer: !!obj["viewer"] ? parseViewer(obj["viewer"]) : null, data: parseToastDataGiftedSubs(obj["data"]) }
   }
-  const isGift = obj["isGift"]
-
-  // AlertDataSubscribe.numCumulativeMonths
-  if (typeof obj["numCumulativeMonths"] !== "number") {
-    throw new Error("invalid data for subscribe alert: numreic 'numCumulativeMonths' field is required")
-  }
-  const numCumulativeMonths = obj["numCumulativeMonths"]
-
-  // AlertDataSubscribe.message
-  let message = ""
-  if (typeof obj["message"] === "string") {
-    message = obj["message"]
-  }
-  
-  return { username, isGift, numCumulativeMonths, message }
+  throw new Error(`invalid toast event payload: unrecognized type '${type}'`)
 }
 
-function parseAlertDataGiftSub(data: unknown): AlertDataGiftSub {
+function parseViewer(data: unknown): Viewer {
   if (typeof data !== "object") {
-    throw new Error("invalid data for gift sub alert: data is not an object")
+    throw new Error("invalid viewer: data is not an object")
   }
   const obj = data as { [key: string]: unknown }
 
-  // AlertDataGiftSub.username
-  if (typeof obj["username"] !== "string" || obj["username"] === "") {
-    throw new Error("invalid data for gift sub alert: non-empty 'username' field is required")
+  // Viewer.twitch_user_id
+  if (typeof obj["twitch_user_id"] !== "string" || obj["twitch_user_id"] === "") {
+    throw new Error("invalid viewer: non-empty 'twitch_user_id' field is required")
   }
-  const username = obj["username"]
+  const twitchUserId = obj["twitch_user_id"]
 
-  // AlertDataGiftSub.numSubscriptions
-  if (typeof obj["numSubscriptions"] !== "number") {
-    throw new Error("invalid data for gift sub alert: numreic 'numSubscriptions' field is required")
+  // Viewer.twitch_display_name
+  if (typeof obj["twitch_display_name"] !== "string" || obj["twitch_display_name"] === "") {
+    throw new Error("invalid viewer: non-empty 'twitch_display_name' field is required")
   }
-  const numSubscriptions = obj["numSubscriptions"]
-  
-  return { username, numSubscriptions }
+  const twitchDisplayName = obj["twitch_display_name"]
+
+  return { twitchUserId, twitchDisplayName }
 }
 
-function parseAlertDataRaid(data: unknown): AlertDataRaid {
+function parseToastDataRaided(data: unknown): ToastDataRaided {
   if (typeof data !== "object") {
-    throw new Error("invalid data for raid alert: data is not an object")
+    throw new Error("invalid 'raided' toast: data is not an object")
   }
   const obj = data as { [key: string]: unknown }
 
-  // AlertDataRaid.username
-  if (typeof obj["username"] !== "string" || obj["username"] === "") {
-    throw new Error("invalid data for raid alert: non-empty 'username' field is required")
+  // ToastDataRaided.num_viewers
+  if (typeof obj["num_viewers"] !== "number") {
+    throw new Error("invalid 'raided' toast: numeric 'num_viewers' field is required")
   }
-  const username = obj["username"]
+  const numViewers = obj["num_viewers"]
 
-  // AlertDataRaid.numViewers
-  if (typeof obj["numViewers"] !== "number") {
-    throw new Error("invalid data for raid alert: numreic 'numViewers' field is required")
-  }
-  const numViewers = obj["numViewers"]
-  
-  return { username, numViewers }
+  return { numViewers }
 }
 
-function parseAlertDataGeneratedImages(data: unknown): AlertDataGeneratedImages {
+function parseToastDataCheered(data: unknown): ToastDataCheered {
   if (typeof data !== "object") {
-    throw new Error("invalid data for generated images alert: data is not an object")
+    throw new Error("invalid 'cheered' toast: data is not an object")
   }
   const obj = data as { [key: string]: unknown }
 
-  // AlertDataGeneratedImages.username
-  if (typeof obj["username"] !== "string" || obj["username"] === "") {
-    throw new Error("invalid data for generated images alert: non-empty 'username' field is required")
+  // ToastDataCheered.num_bits
+  if (typeof obj["num_bits"] !== "number") {
+    throw new Error("invalid 'cheered' toast: numeric 'num_bits' field is required")
   }
-  const username = obj["username"]
+  const numBits = obj["num_bits"]
 
-  // AlertDataGeneratedImages.description
-  if (typeof obj["description"] !== "string" || obj["description"] === "") {
-    throw new Error("invalid data for generated images alert: non-empty 'description' field is required")
+  // ToastDataCheered.message
+  if (typeof obj["message"] !== "string") {
+    throw new Error("invalid 'cheered' toast: string 'message' field is required")
+  }
+  const message = obj["message"]
+
+  return { numBits, message }
+}
+
+function parseToastDataResubscribed(data: unknown): ToastDataResubscribed {
+  if (typeof data !== "object") {
+    throw new Error("invalid 'resubscribed' toast: data is not an object")
+  }
+  const obj = data as { [key: string]: unknown }
+
+  // ToastDataResubscribed.num_cumulative_months
+  if (typeof obj["num_cumulative_months"] !== "number") {
+    throw new Error("invalid 'resubscribed' toast: numeric 'num_cumulative_months' field is required")
+  }
+  const numCumulativeMonths = obj["num_cumulative_months"]
+
+  // ToastDataResubscribed.message
+  if (typeof obj["message"] !== "string") {
+    throw new Error("invalid 'resubscribed' toast: string 'message' field is required")
+  }
+  const message = obj["message"]
+
+  return { numCumulativeMonths, message }
+}
+
+function parseToastDataGiftedSubs(data: unknown): ToastDataGiftedSubs {
+  if (typeof data !== "object") {
+    throw new Error("invalid 'gifted-subs' toast: data is not an object")
+  }
+  const obj = data as { [key: string]: unknown }
+
+  // ToastDataResubscribed.num_subscriptions
+  if (typeof obj["num_subscriptions"] !== "number") {
+    throw new Error("invalid 'gifted-subs' toast: numeric 'num_subscriptions' field is required")
+  }
+  const numSubscriptions = obj["num_subscriptions"]
+
+  return { numSubscriptions }
+}
+
+function parsePayloadImage(data: unknown): PayloadImage {
+  if (typeof data !== "object") {
+    throw new Error("invalid image event payload: data is not an object")
+  }
+  const obj = data as { [key: string]: unknown }
+
+  // PayloadImage.viewer
+  const viewer = parseViewer(obj["viewer"])
+
+  // PayloadImage.style
+  if (typeof obj["style"] !== "string") {
+    throw new Error("invalid image event payload: non-empty 'style' field is required")
+  }
+  const style = obj["style"]
+  if (style !== "ghost") {
+    throw new Error(`invalid image event payload: unexpected 'style' value '${style}'`)
+  }
+
+  // PayloadImage.description
+  if (typeof obj["description"] !== "string") {
+    throw new Error("invalid image event payload: non-empty 'description' field is required")
   }
   const description = obj["description"]
 
-  // AlertDataGeneratedImages.urls
-  const urls = [] as string[]
-  if (!Array.isArray(obj["urls"])) {
-    throw new Error("invalid data for generated images alert: 'urls' array is required")
+  // PayloadImage.image_url
+  if (typeof obj["image_url"] !== "string") {
+    throw new Error("invalid image event payload: non-empty 'image_url' field is required")
   }
-  for (const url of obj["urls"]) {
-    if (typeof url !== "string" || !url) {
-      throw new Error("invalid data for generated images alert: all items in 'urls' array must be non-empty strings")
-    }
-    urls.push(url)
-  }
-  if (urls.length === 0) {
-    throw new Error("invalid data for generated images alert: 'urls' array must have at least one item")
-  }
-  
-  return { username, description, urls }
+  const imageUrl = obj["image_url"]
+
+  return { viewer, style, description, imageUrl }
 }
