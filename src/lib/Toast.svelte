@@ -9,6 +9,7 @@
   import PrayerBear from "./PrayerBear.svelte"
   export let alert: OnscreenEvent
   export let layer: string
+  export let key: number
 </script>
 
 {#if alert.type === 'toast' && alert.payload.type === 'followed'}
@@ -66,7 +67,7 @@
 
 {:else if alert.type === 'image' && alert.payload.type === 'static' && alert.payload.details.imageId === 'prayer-bear'}
 {#if layer == 'normal'}
-<PrayerBear />
+<PrayerBear {key} />
 {/if}
 
 {:else if alert.type === 'image' && alert.payload.type === 'ghost'}

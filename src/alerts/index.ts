@@ -21,7 +21,7 @@ export class AlertClient {
 }
 
 export type AlertToasterInit = {
-  onToast: (ev: OnscreenEvent, durationMs: number) => void
+  onToast: (ev: OnscreenEvent, durationMs: number, key: number) => void
   onClear: () => void
 }
 
@@ -29,6 +29,8 @@ export class AlertToaster {
   init: AlertToasterInit
   client: AlertClient
   bufferedAlerts: OnscreenEvent[]
+
+  nextToastId = 1
 
   clearToastTimer: ReturnType<typeof setTimeout> | null
   checkBufferTimer: ReturnType<typeof setTimeout> | null
@@ -70,8 +72,10 @@ export class AlertToaster {
 
   private fireToast(alert: OnscreenEvent) {
     // Fire an onToast notification so the app will display our alert
+    const key = this.nextToastId
     const toastDuration = this.getToastDuration(alert)
-    this.init.onToast(alert, toastDuration)
+    this.init.onToast(alert, toastDuration, key)
+    this.nextToastId++
 
     // Set a timer to clear the toast as soon as its allotted duration is up, so we
     // don't leave old UI state lying around

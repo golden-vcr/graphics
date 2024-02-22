@@ -12,7 +12,7 @@
   
   const tapes = new TapeCache()
   const tape = writable(null as Tape | null)
-  const toast = writable(null as { alert: OnscreenEvent, durationMs: number } | null)
+  const toast = writable(null as { alert: OnscreenEvent, durationMs: number, key: number } | null)
 
   const layer = new URLSearchParams(window.location.search).get('layer') || 'normal'
 
@@ -21,7 +21,7 @@
     await tapes.init()
 
     toaster = new AlertToaster({
-      onToast(alert, durationMs) {
+      onToast(alert, durationMs, key) {
         if (alert.type === 'status') {
           if (alert.payload.currentTapeId > 0) { 
             tapes.get(alert.payload.currentTapeId).then((value) => {
@@ -34,13 +34,42 @@
             tape.set(null)
           }
         } else {
-          toast.set({ alert, durationMs })
+          toast.set({ alert, durationMs, key })
         }
       },
       onClear() {
         toast.set(null)
       },
     })
+
+    setTimeout(() => {
+      toaster?.simulateAlert({
+        type: 'image',
+        payload: {
+          type: 'static',
+          viewer: {twitchUserId: '90790024', twitchDisplayName: 'wasabimilkshake'},
+          details: {
+            imageId: 'prayer-bear',
+            message: 'May prayer bear bless us all',
+          },
+        }
+      })
+    }, 55)
+
+    setTimeout(() => {
+      toaster?.simulateAlert({
+        type: 'image',
+        payload: {
+          type: 'static',
+          viewer: {twitchUserId: '90790024', twitchDisplayName: 'wasabimilkshake'},
+          details: {
+            imageId: 'prayer-bear',
+            message: 'May prayer bear bless us all',
+          },
+        }
+      })
+    }, 65)
+      
 
     if (SIMULATE_ALERTS) {
       setTimeout(() => {
@@ -56,11 +85,12 @@
         toaster?.simulateAlert({
           type: 'image',
           payload: {
+            type: 'static',
             viewer: {twitchUserId: '90790024', twitchDisplayName: 'wasabimilkshake'},
-            style: 'ghost',
-            extra: '',
-            description: 'This field is being used as a placeholder for a user message',
-            imageUrl: '_PrayerBear',
+            details: {
+              imageId: 'prayer-bear',
+              message: 'May prayer bear bless us all',
+            },
           }
         })
       }, 55)
@@ -86,11 +116,12 @@
         toaster?.simulateAlert({
           type: 'image',
           payload: {
+            type: 'ghost',
             viewer: {twitchUserId: '90790024', twitchDisplayName: 'wasabimilkshake'},
-            style: 'ghost',
-            extra: '',
-            description: 'a trumpet sticking out a human tongue',
-            imageUrl: 'https://golden-vcr-user-images.nyc3.digitaloceanspaces.com/f5f92208-0211-4b72-b3da-a747c2e9ada5/f5f92208-0211-4b72-b3da-a747c2e9ada5-00.jpg',
+            details: {
+              imageUrl: 'https://golden-vcr-user-images.nyc3.digitaloceanspaces.com/f5f92208-0211-4b72-b3da-a747c2e9ada5/f5f92208-0211-4b72-b3da-a747c2e9ada5-00.jpg',
+              description: 'a trumpet sticking out a human tongue',
+            }
           }
         })
       }, 160)
@@ -112,7 +143,7 @@
   </div>
   <div class="toast-layer">
 {#if $toast}
-    <Toast alert={$toast.alert} {layer} />
+    <Toast alert={$toast.alert} {layer} key={$toast.key} />
 {/if}
   </div>
 </main>

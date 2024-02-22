@@ -3,6 +3,8 @@
   import audioUrl from '../assets/gonna-get-dark.mp3'
   import imageUrl from '../assets/gonna-get-dark.webp'
 
+  export let key: number
+
   const DURATION_MS = 2900
 
   let audio: HTMLAudioElement
@@ -20,7 +22,7 @@
 </script>
 
 <div>
-  <img class={imageClass} src={imageUrl} alt="Prayer Bear" />
+  <img class={imageClass} src={`${imageUrl}?k=${key}`} alt="Prayer Bear" />
 </div>
 <audio src={audioUrl} bind:this={audio} />
 
