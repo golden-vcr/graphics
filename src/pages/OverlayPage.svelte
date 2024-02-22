@@ -8,7 +8,7 @@
   import Toast from "../lib/Toast.svelte"
   import LowerThird from "../lib/LowerThird.svelte"
 
-  const SIMULATE_ALERTS = true
+  const SIMULATE_ALERTS = false
   
   const tapes = new TapeCache()
   const tape = writable(null as Tape | null)
