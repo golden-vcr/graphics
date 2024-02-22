@@ -42,35 +42,6 @@
       },
     })
 
-    setTimeout(() => {
-      toaster?.simulateAlert({
-        type: 'image',
-        payload: {
-          type: 'static',
-          viewer: {twitchUserId: '90790024', twitchDisplayName: 'wasabimilkshake'},
-          details: {
-            imageId: 'prayer-bear',
-            message: 'May prayer bear bless us all',
-          },
-        }
-      })
-    }, 55)
-
-    setTimeout(() => {
-      toaster?.simulateAlert({
-        type: 'image',
-        payload: {
-          type: 'static',
-          viewer: {twitchUserId: '90790024', twitchDisplayName: 'wasabimilkshake'},
-          details: {
-            imageId: 'prayer-bear',
-            message: 'May prayer bear bless us all',
-          },
-        }
-      })
-    }, 65)
-      
-
     if (SIMULATE_ALERTS) {
       setTimeout(() => {
         toaster?.simulateAlert({
