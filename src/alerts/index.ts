@@ -97,8 +97,11 @@ export class AlertToaster {
       return 10000
     }
     if (alert.type === 'image') {
-      if (alert.payload.imageUrl == '_PrayerBear') {
-        return 3500
+      if (alert.payload.type === 'static') {
+        if (alert.payload.details.imageId == 'prayer-bear') {
+          return 3500
+        }
+        return 5000
       }
       return getImageAlertDuration(1)
     }

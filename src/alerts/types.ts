@@ -40,11 +40,29 @@ export type ToastDataGiftedSubs = {
 
 export type PayloadImage = {
   viewer: Viewer
-  style: 'ghost' | 'clip-art'
-  description: string
-  extra: string
-  imageUrl: string
+} & (
+    { type: 'static', details: ImageDetailsStatic }
+  | { type: 'ghost', details: ImageDetailsGhost }
+  | { type: 'friend', details: ImageDetailsFriend }
+)
+
+export type ImageDetailsStatic = {
+  imageId: string
+  message: string
 }
+
+export type ImageDetailsGhost = {
+  imageUrl: string
+  description: string
+}
+
+export type ImageDetailsFriend = {
+  imageUrl: string
+  description: string
+  name: string
+  backgroundColor: string
+}
+
 
 export function parseOnscreenEvent(data: unknown): OnscreenEvent {
   if (typeof data !== "object") {
@@ -214,35 +232,98 @@ function parsePayloadImage(data: unknown): PayloadImage {
   }
   const obj = data as { [key: string]: unknown }
 
+  // PayloadImage.type
+  if (typeof obj["type"] !== "string") {
+    throw new Error("invalid image event payload: non-empty 'type' field is required")
+  }
+  const type = obj["type"]
+
   // PayloadImage.viewer
   const viewer = parseViewer(obj["viewer"])
 
-  // PayloadImage.style
-  if (typeof obj["style"] !== "string" || !obj["style"]) {
-    throw new Error("invalid image event payload: non-empty 'style' field is required")
+  // PayloadImage.details
+  switch (type) {
+    case 'static':
+      return { type, viewer, details: parseImageDetailsStatic(obj["details"]) }
+    case 'ghost':
+      return { type, viewer, details: parseImageDetailsGhost(obj["details"]) }
+    case 'friend':
+      return { type, viewer, details: parseImageDetailsFriend(obj["details"]) }
   }
-  const style = obj["style"]
-  if (style !== "ghost" && style !== "clip-art") {
-    throw new Error(`invalid image event payload: unexpected 'style' value '${style}'`)
-  }
+  throw new Error(`invalid image event payload: unrecognized type '${type}'`)
+}
 
-  // PayloadImage.description
-  if (typeof obj["description"] !== "string") {
-    throw new Error("invalid image event payload: string 'description' field is required")
+function parseImageDetailsStatic(data: unknown): ImageDetailsStatic {
+  if (typeof data !== "object") {
+    throw new Error("invalid static image details: data is not an object")
   }
-  const description = obj["description"]
+  const obj = data as { [key: string]: unknown }
 
-  // PayloadImage.extra
-  let extra = ""
-  if (typeof obj["extra"] === "string") {
-    extra = obj["extra"]
+  // ImageDetailsStatic.image_id
+  if (typeof obj["image_id"] !== "string" || !obj["image_id"]) {
+    throw new Error("invalid static image details: non-empty 'image_id' field is required")
   }
+  const imageId = obj["image_id"]
 
-  // PayloadImage.image_url
-  if (typeof obj["image_url"] !== "string") {
-    throw new Error("invalid image event payload: non-empty 'image_url' field is required")
+  // ImageDetailsStatic.message
+  if (typeof obj["message"] !== "string") {
+    throw new Error("invalid static image details: string 'message' field is required")
+  }
+  const message = obj["message"]
+
+  return { imageId, message }
+}
+
+function parseImageDetailsGhost(data: unknown): ImageDetailsGhost {
+  if (typeof data !== "object") {
+    throw new Error("invalid ghost image details: data is not an object")
+  }
+  const obj = data as { [key: string]: unknown }
+
+  // ImageDetailsGhost.image_url
+  if (typeof obj["image_url"] !== "string" || !obj["image_url"]) {
+    throw new Error("invalid ghost image details: non-empty 'image_url' field is required")
   }
   const imageUrl = obj["image_url"]
 
-  return { viewer, style, description, extra, imageUrl }
+  // ImageDetailsGhost.description
+  if (typeof obj["description"] !== "string" || !obj["description"]) {
+    throw new Error("invalid ghost image details: non-empty 'description' field is required")
+  }
+  const description = obj["description"]
+
+  return { imageUrl, description }
+}
+
+function parseImageDetailsFriend(data: unknown): ImageDetailsFriend {
+  if (typeof data !== "object") {
+    throw new Error("invalid friend image details: data is not an object")
+  }
+  const obj = data as { [key: string]: unknown }
+
+  // ImageDetailsFriend.image_url
+  if (typeof obj["image_url"] !== "string" || !obj["image_url"]) {
+    throw new Error("invalid friend image details: non-empty 'image_url' field is required")
+  }
+  const imageUrl = obj["image_url"]
+
+  // ImageDetailsFriend.description
+  if (typeof obj["description"] !== "string" || !obj["description"]) {
+    throw new Error("invalid friend image details: non-empty 'description' field is required")
+  }
+  const description = obj["description"]
+
+  // ImageDetailsFriend.name
+  if (typeof obj["name"] !== "string" || !obj["name"]) {
+    throw new Error("invalid friend image details: non-empty 'name' field is required")
+  }
+  const name = obj["name"]
+
+  // ImageDetailsFriend.background_color
+  if (typeof obj["background_color"] !== "string" || !obj["background_color"]) {
+    throw new Error("invalid friend image details: non-empty 'background_color' field is required")
+  }
+  const backgroundColor = obj["background_color"]
+
+  return { imageUrl, description, name, backgroundColor }
 }

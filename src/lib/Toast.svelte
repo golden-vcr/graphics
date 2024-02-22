@@ -64,18 +64,18 @@
 {/if}
 
 
-{:else if alert.type === 'image' && alert.payload.imageUrl === '_PrayerBear'}
+{:else if alert.type === 'image' && alert.payload.type === 'static' && alert.payload.details.imageId === 'prayer-bear'}
 {#if layer == 'normal'}
 <PrayerBear />
 {/if}
 
-{:else if alert.type === 'image' && alert.payload.style === 'ghost'}
+{:else if alert.type === 'image' && alert.payload.type === 'ghost'}
 
 <GeneratedImagesToast
   {layer}
   username={alert.payload.viewer.twitchDisplayName}
-  description={alert.payload.description}
-  imageUrls={[alert.payload.imageUrl]}
+  description={alert.payload.details.description}
+  imageUrls={[alert.payload.details.imageUrl]}
 />
 
 {/if}
