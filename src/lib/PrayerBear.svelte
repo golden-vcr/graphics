@@ -22,7 +22,7 @@
 </script>
 
 <div>
-  <img class={imageClass} src={`${imageUrl}?k=${key}`} alt="Prayer Bear" />
+  <img class={imageClass} src={`${imageUrl}?k=${key}&t=${Date.now()}`} alt="Prayer Bear" />
 </div>
 <audio src={audioUrl} bind:this={audio} />
 
