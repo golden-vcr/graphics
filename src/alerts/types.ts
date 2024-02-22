@@ -40,8 +40,9 @@ export type ToastDataGiftedSubs = {
 
 export type PayloadImage = {
   viewer: Viewer
-  style: 'ghost'
+  style: 'ghost' | 'clip-art'
   description: string
+  extra: string
   imageUrl: string
 }
 
@@ -217,19 +218,25 @@ function parsePayloadImage(data: unknown): PayloadImage {
   const viewer = parseViewer(obj["viewer"])
 
   // PayloadImage.style
-  if (typeof obj["style"] !== "string") {
+  if (typeof obj["style"] !== "string" || !obj["style"]) {
     throw new Error("invalid image event payload: non-empty 'style' field is required")
   }
   const style = obj["style"]
-  if (style !== "ghost") {
+  if (style !== "ghost" && style !== "clip-art") {
     throw new Error(`invalid image event payload: unexpected 'style' value '${style}'`)
   }
 
   // PayloadImage.description
   if (typeof obj["description"] !== "string") {
-    throw new Error("invalid image event payload: non-empty 'description' field is required")
+    throw new Error("invalid image event payload: string 'description' field is required")
   }
   const description = obj["description"]
+
+  // PayloadImage.extra
+  let extra = ""
+  if (typeof obj["extra"] === "string") {
+    extra = obj["extra"]
+  }
 
   // PayloadImage.image_url
   if (typeof obj["image_url"] !== "string") {
@@ -237,5 +244,5 @@ function parsePayloadImage(data: unknown): PayloadImage {
   }
   const imageUrl = obj["image_url"]
 
-  return { viewer, style, description, imageUrl }
+  return { viewer, style, description, extra, imageUrl }
 }

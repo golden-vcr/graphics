@@ -97,6 +97,9 @@ export class AlertToaster {
       return 10000
     }
     if (alert.type === 'image') {
+      if (alert.payload.imageUrl == '_PrayerBear') {
+        return 3500
+      }
       return getImageAlertDuration(1)
     }
     if (alert.type === 'toast') {

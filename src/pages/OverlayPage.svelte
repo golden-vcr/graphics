@@ -8,7 +8,7 @@
   import Toast from "../lib/Toast.svelte"
   import LowerThird from "../lib/LowerThird.svelte"
 
-  const SIMULATE_ALERTS = false
+  const SIMULATE_ALERTS = true
   
   const tapes = new TapeCache()
   const tape = writable(null as Tape | null)
@@ -54,6 +54,18 @@
       }, 50)
       setTimeout(() => {
         toaster?.simulateAlert({
+          type: 'image',
+          payload: {
+            viewer: {twitchUserId: '90790024', twitchDisplayName: 'wasabimilkshake'},
+            style: 'ghost',
+            extra: '',
+            description: 'This field is being used as a placeholder for a user message',
+            imageUrl: '_PrayerBear',
+          }
+        })
+      }, 55)
+      setTimeout(() => {
+        toaster?.simulateAlert({
           type: 'status',
           payload: {
             currentTapeId: 54,
@@ -76,6 +88,7 @@
           payload: {
             viewer: {twitchUserId: '90790024', twitchDisplayName: 'wasabimilkshake'},
             style: 'ghost',
+            extra: '',
             description: 'a trumpet sticking out a human tongue',
             imageUrl: 'https://golden-vcr-user-images.nyc3.digitaloceanspaces.com/f5f92208-0211-4b72-b3da-a747c2e9ada5/f5f92208-0211-4b72-b3da-a747c2e9ada5-00.jpg',
           }

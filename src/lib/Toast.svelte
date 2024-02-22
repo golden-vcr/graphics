@@ -6,6 +6,7 @@
   import SubscribeToast from "./SubscribeToast.svelte"
   import GiftSubToast from "./GiftSubToast.svelte"
   import GeneratedImagesToast from "./GeneratedImagesToast.svelte"
+  import PrayerBear from "./PrayerBear.svelte"
   export let alert: OnscreenEvent
   export let layer: string
 </script>
@@ -63,7 +64,12 @@
 {/if}
 
 
-{:else if alert.type === 'image'}
+{:else if alert.type === 'image' && alert.payload.imageUrl === '_PrayerBear'}
+{#if layer == 'normal'}
+<PrayerBear />
+{/if}
+
+{:else if alert.type === 'image' && alert.payload.style === 'ghost'}
 
 <GeneratedImagesToast
   {layer}
