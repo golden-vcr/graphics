@@ -56,6 +56,7 @@ export class ChatLog {
       this._messages.update((prev) => (
         prev.filter((x) => x.userId !== event.payload.userId)
       ))
+      break
     case "clear":
       this._messages.set([])
       break
