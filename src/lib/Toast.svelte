@@ -8,6 +8,7 @@
   import GeneratedImagesToast from "./GeneratedImagesToast.svelte"
   import PrayerBear from "./PrayerBear.svelte"
   import StandBack from "./StandBack.svelte"
+  import PeterTrainA from "./PeterTrainA.svelte"
   export let alert: OnscreenEvent
   export let layer: string
   export let key: number
@@ -74,6 +75,11 @@
 {:else if alert.type === 'image' && alert.payload.type === 'static' && alert.payload.details.imageId === 'stand-back'}
 {#if layer == 'normal'}
 <StandBack {key} />
+{/if}
+
+{:else if alert.type === 'image' && alert.payload.type === 'static' && alert.payload.details.imageId === 'petertrain-a'}
+{#if layer == 'normal'}
+<PeterTrainA {key} />
 {/if}
 
 {:else if alert.type === 'image' && alert.payload.type === 'ghost'}

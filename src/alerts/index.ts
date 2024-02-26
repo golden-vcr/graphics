@@ -102,8 +102,11 @@ export class AlertToaster {
     }
     if (alert.type === 'image') {
       if (alert.payload.type === 'static') {
-        if (alert.payload.details.imageId == 'prayer-bear') {
+        if (alert.payload.details.imageId === 'prayer-bear') {
           return 3500
+        }
+        if (alert.payload.details.imageId === 'petertrain-a') {
+          return 11000
         }
         return 5000
       }
