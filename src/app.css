@@ -28,6 +28,62 @@ html, body, #app {
   src: url('./assets/vcr_osd.ttf');
 }
 
+@font-face {
+  font-family: "Ubuntu";
+  src: url('./assets/Ubuntu-Light.ttf');
+  font-weight: 300;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Ubuntu";
+  src: url('./assets/Ubuntu-LightItalic.ttf');
+  font-weight: 300;
+  font-style: italic;
+}
+
+@font-face {
+  font-family: "Ubuntu";
+  src: url('./assets/Ubuntu-Regular.ttf');
+  font-weight: 400;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Ubuntu";
+  src: url('./assets/Ubuntu-Italic.ttf');
+  font-weight: 400;
+  font-style: italic;
+}
+
+@font-face {
+  font-family: "Ubuntu";
+  src: url('./assets/Ubuntu-Medium.ttf');
+  font-weight: 500;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Ubuntu";
+  src: url('./assets/Ubuntu-MediumItalic.ttf');
+  font-weight: 500;
+  font-style: italic;
+}
+
+@font-face {
+  font-family: "Ubuntu";
+  src: url('./assets/Ubuntu-Bold.ttf');
+  font-weight: 700;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Ubuntu";
+  src: url('./assets/Ubuntu-BoldItalic.ttf');
+  font-weight: 700;
+  font-style: italic;
+}
+
 .osd-safe {
   padding: 4rem;
 }
