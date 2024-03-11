@@ -96,6 +96,36 @@
           }
         })
       }, 160)
+      setTimeout(() => {
+        toaster?.simulateAlert({
+          type: 'image',
+          payload: {
+            type: 'friend',
+            viewer: {twitchUserId: '90790024', twitchDisplayName: 'wasabimilkshake'},
+            details: {
+              imageUrl: 'https://awforsythe.com/files/tree.webp',
+              description: 'a willow tree with a giant sword stabbed through it',
+              name: 'Willowblade',
+              backgroundColor: '#e33734',
+            }
+          }
+        })
+      }, 180)
+      setTimeout(() => {
+        toaster?.simulateAlert({
+          type: 'image',
+          payload: {
+            type: 'friend',
+            viewer: {twitchUserId: '90790024', twitchDisplayName: 'wasabimilkshake'},
+            details: {
+              imageUrl: 'https://awforsythe.com/files/tomato.webp',
+              description: 'a tomato with human teeth',
+              name: 'Smiley Pete',
+              backgroundColor: '#fe7a15',
+            }
+          }
+        })
+      }, 190)
     }
   })
   onDestroy(() => {

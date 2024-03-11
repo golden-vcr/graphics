@@ -110,6 +110,9 @@ export class AlertToaster {
         }
         return 5000
       }
+      if (alert.payload.type === 'friend') {
+        return 12000
+      }
       return getImageAlertDuration(1)
     }
     if (alert.type === 'toast') {

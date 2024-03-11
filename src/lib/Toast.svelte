@@ -6,6 +6,7 @@
   import SubscribeToast from "./SubscribeToast.svelte"
   import GiftSubToast from "./GiftSubToast.svelte"
   import GeneratedImagesToast from "./GeneratedImagesToast.svelte"
+  import FriendImageToast from "./FriendImageToast.svelte"
   import PrayerBear from "./PrayerBear.svelte"
   import StandBack from "./StandBack.svelte"
   import PeterTrainA from "./PeterTrainA.svelte"
@@ -82,13 +83,22 @@
 <PeterTrainA {key} />
 {/if}
 
-{:else if alert.type === 'image' && alert.payload.type === 'ghost'}
+{:else if alert.type === 'image' && alert.payload.type === 'friend'}
+{#if layer == 'normal'}
+<FriendImageToast
+  username={alert.payload.viewer.twitchDisplayName}
+  description={alert.payload.details.description}
+  imageUrl={alert.payload.details.imageUrl}
+  name={alert.payload.details.name}
+  backgroundColor={alert.payload.details.backgroundColor}
+/>
+{/if}
 
+{:else if alert.type === 'image' && alert.payload.type === 'ghost'}
 <GeneratedImagesToast
   {layer}
   username={alert.payload.viewer.twitchDisplayName}
   description={alert.payload.details.description}
   imageUrls={[alert.payload.details.imageUrl]}
 />
-
 {/if}
